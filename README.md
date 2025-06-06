@@ -43,7 +43,7 @@ dotnet run
 ### Database
 By default Crowbar Forum uses MSSQL, but you can also use sqlite, by changing the "database" field in to "sqlite" and the "DefaultConnection" to match the format below:
 #### Sqlite syntax
-`Data Source=crowbarforum.db;Version=3;`
+`Data Source=crowbarforum.db;`
 
 <hr><br><br>
 
