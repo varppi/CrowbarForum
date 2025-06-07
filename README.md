@@ -13,7 +13,7 @@ All the forums that don't use JS seem to be written in PHP, which is as a langua
 - **Basic forum features like creating threads, comments etc...**
 - **Altcha <img height=25 src="https://github.com/user-attachments/assets/792840a7-482d-470b-80f7-1bc93a184049"> POW catpcha integration (the only thing that uses JS in the whole project)**
 - **Rate limits**
-- **Fully customizable front page, more customization settings on the way**
+- **Customizable**
 - **Markdown support**
 ### Security related
 - **Built with security in mind, passed my own penetration tests**
@@ -27,23 +27,31 @@ All the forums that don't use JS seem to be written in PHP, which is as a langua
 You can use dotnet on bare metal or use Docker. Docker is more recommended due to security reasons.
 
 ### Docker
-```
+```bash
 git clone https://github.com/SpoofIMEI/CrowbarForum
 cd CrowbarForum
-<commands coming soon>
+docker build -t crowbar -f Crowbar/Dockerfile
+docker run --name crowbarforum_instance crowbar
 ```
 ### Bare metal
-```
+```bash
 git clone https://github.com/SpoofIMEI/CrowbarForum
-cd CrowbarForum
+cd CrowbarForum/Crowbar
+dotnet tool install --global dotnet-ef 
+# Add dotnet tool path to your $PATH variable
+dotnet ef migrations remove 
+dotnet ef migrations add ApplicationDbContextMigration
+dotnet ef database update 
 dotnet run
 ```
 
 # Configuration
 ### Database
-By default Crowbar Forum uses MSSQL, but you can also use sqlite, by changing the "database" field in to "sqlite" and the "DefaultConnection" to match the format below:
+By default Crowbar Forum uses SQLite, but you can also use MSSQL or MySQL by changing the "database" field to `mysql/sqlite/mssql/postgre` and the "DefaultConnection" to match the format below:
 #### Sqlite syntax
 `Data Source=crowbarforum.db;`
+#### MySQL, MSSQL and Postgresql syntax
+`Server=myserver;Database=mydb;User=myuser;Password=mypassword;`
 
 <hr><br><br>
 
@@ -66,12 +74,12 @@ With security being the main focus on this project, a lot of thought went into i
 I'm just a single person making this, so not all common features are present yet.
 
 ### Priority 1
-- [ ] Reply function
+- [x] Reply function
 - [ ] Likes and dislikes
 - [ ] Easily customizable logo
-- [ ] Easily customizable forum name
+- [x] Easily customizable forum name
 - [ ] More customizable profile (description, pgp key etc)
-- [ ] Customizable WAF
+- [x] Customizable WAF
 
 ### Priority 2
 - [ ] More pretty default UI
