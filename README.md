@@ -64,6 +64,7 @@ With security being the main focus on this project, a lot of thought went into i
 - Every action needs to be accompanied by a valid user claim making sure that even if an unauthenticated or unauthorized user managed to bypass the higher level security measures, the user still wouldn't be able to make anything happen.
 - At no point does the program make custom SQL statements. Everything goes through Ef Core ORM.
 - All user inputs are validated.
+- Almost everything is stored in an encrypted form. The key is specified in appsettings.json.
 
 > [!CAUTION]
 > No software is safe and things always get over looked. If you have any tech expertise, I urge you to go through the code yourself and report vulnerabilities if you find any.
@@ -74,14 +75,15 @@ With security being the main focus on this project, a lot of thought went into i
 I'm just a single person making this, so not all common features are present yet.
 
 ### Priority 1
+- [x] In rest encryption
 - [x] Reply function
-- [ ] Likes and dislikes
-- [ ] Easily customizable logo
+- [x] Likes
 - [x] Easily customizable forum name
 - [ ] More customizable profile (description, pgp key etc)
 - [x] Customizable WAF
 
 ### Priority 2
+- [ ] Option to not have permanent encryption key, instead randomly generate one at startup
 - [ ] More pretty default UI
 - [ ] Thread locking
 - [ ] File storage
