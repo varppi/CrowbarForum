@@ -20,6 +20,11 @@
                 <input class="form-control" asp-for="Input.Description" />
                 <label class="form-label" asp-for="Input.Description">Category description:</label>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Only admins can make threads:</label>
+                <input type="checkbox" asp-for="Input.AdminOnly" />
+            </div>
+            
             <button class="w-100 btn btn-primary d-flex align-items-center justify-content-center">Create Category<i class='bx bx-plus ps-1'></i></button>
         </form>
     </div>

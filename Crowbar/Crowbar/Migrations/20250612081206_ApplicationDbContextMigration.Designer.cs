@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Crowbar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250612072026_ApplicationDbContextMigration")]
+    [Migration("20250612081206_ApplicationDbContextMigration")]
     partial class ApplicationDbContextMigration
     {
         /// <inheritdoc />
@@ -24,6 +24,9 @@ namespace Crowbar.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("AdminOnly")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")

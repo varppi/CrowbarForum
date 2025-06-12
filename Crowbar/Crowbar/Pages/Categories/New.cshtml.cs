@@ -23,6 +23,8 @@ namespace Crowbar.Pages.Categories
             public string Name { get; set; }
             [Required]
             public string Description { get; set; }
+            [Required]
+            public string AdminOnly { get; set; }
         }
 
         public NewModel(ApplicationDbContext context, ForumActions actions)
@@ -41,6 +43,7 @@ namespace Crowbar.Pages.Categories
             {
                 Name = Input.Name,
                 Description = Input.Description,
+                AdminOnly = Input.AdminOnly == "true",
             };
 
             var id = Actions.AddCategory(User, category, ModelState);

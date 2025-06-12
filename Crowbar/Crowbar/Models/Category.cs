@@ -8,6 +8,8 @@ namespace Crowbar.Models
         private string? _description;
 
         public int Id { get; set; }
+        public bool? AdminOnly { get; set; }
+
         public string? Name {
             get => EncryptionLayer.DecryptString(_name);
             set => _name = EncryptionLayer.Encrypt(value);

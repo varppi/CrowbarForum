@@ -38,6 +38,8 @@ namespace Crowbar.Pages.Categories
             public string Name { get; set; }
             [Required]
             public string Description { get; set; }
+            [Required]
+            public bool AdminOnly { get; set; }
         }
 
         // Misc
@@ -81,13 +83,15 @@ namespace Crowbar.Pages.Categories
                             new Models.Category
                             {
                                 Name = InputModify.Name,
-                                Description = InputModify.Description
+                                Description = InputModify.Description,
+                                AdminOnly = InputModify.AdminOnly,
                             }, ModelState);
                         if (!success) return Page();
                         else return LocalRedirect($"/Categories");
                     }
                     InputModify.Name = category.Name;
                     InputModify.Description = category.Description;
+                    InputModify.AdminOnly = category.AdminOnly ?? false;
                     return Page();
             }
 

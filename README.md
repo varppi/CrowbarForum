@@ -102,7 +102,7 @@ I'm just a single person making this, so it might take a while. Contributions ar
 - [ ] Clean up code
 - [x] Support for hiding threads from non members
 - [x] Setting to allow or disallow attachment downloads from non members
-- [ ] Admin only threads for announcements
+- [x] Admin only threads for announcements
 - [ ] Invite codes
 
 ### Priority 2

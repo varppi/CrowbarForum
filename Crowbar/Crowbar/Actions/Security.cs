@@ -69,7 +69,7 @@ namespace Crowbar.Actions
                 return true;
 
             // Level USER
-            return user.Identity.IsAuthenticated;
+            return accessLevel == AccessLevelRequired.USER && user.Identity.IsAuthenticated;
         }
     }
 }

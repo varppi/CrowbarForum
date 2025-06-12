@@ -25,7 +25,7 @@ namespace Crowbar.Pages.Threads
             [Required]
             public required string Content { get; set; }
             [Required]
-            public required string Category { get; set; }
+            public required int Category { get; set; }
             public IFormFile[]? Attachments { get; set; }
         }
 
@@ -41,6 +41,17 @@ namespace Crowbar.Pages.Threads
 
         public IActionResult OnPost()
         {
+            if (!Actions.HasLevelRequired(User, ForumActions.AccessLevelRequired.USER))
+                return LocalRedirect("/login");
+            var category = Context.Categories.Find(Input.Category);
+            if (category is null)
+                return BadRequest();
+            Console.WriteLine($"Admin only: {category.AdminOnly} has access: {Actions.HasLevelRequired(User, ForumActions.AccessLevelRequired.ADMIN)}");
+            if ((category.AdminOnly ?? false) && !Actions.HasLevelRequired(User, ForumActions.AccessLevelRequired.ADMIN))
+            {
+                ModelState.AddModelError(string.Empty, "this category is admin only");
+                return Page();
+            }
 
             List<int> fileIds = new();
 
@@ -62,7 +73,7 @@ namespace Crowbar.Pages.Threads
 
             var thread = new Models.Thread
             {
-                Category = Input.Category,
+                Category = $"{Input.Category}",
                 Published = DateTime.Now,
                 Creator = User.Identity.Name,
                 Content = Input.Content,

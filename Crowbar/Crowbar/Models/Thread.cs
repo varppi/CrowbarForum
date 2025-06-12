@@ -14,6 +14,7 @@ namespace Crowbar.Models
         public int Id { get; set; }
         public DateTime Published { get; set; }
         public int[]? Attachments { get; set; }
+
         public string[]? Dislikes
         {
             get => EncryptionLayer.DecryptStringList(_dislikes);

@@ -27,6 +27,10 @@
                 <input class="form-control" asp-for="InputModify.Description" />
                 <label class="form-label" asp-for="InputModify.Description">Description:</label>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Only admins can make threads:</label>
+                <input type="checkbox" asp-for="InputModify.AdminOnly" />
+            </div>
             <button class="w-100 text-white btn btn-warning d-flex justify-content-center align-items-center">Save Category<i class='bx bx-save ps-1'></i></button>
         </form>
     </div>
