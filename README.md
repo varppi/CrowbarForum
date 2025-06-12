@@ -102,6 +102,7 @@ I'm just a single person making this, so it might take a while. Contributions ar
 - [ ] Clean up code
 - [ ] Support for hiding threads from non members
 - [ ] Setting to allow or disallow attachment downloads from non members
+- [ ] Admin only threads for announcements
 
 ### Priority 2
 - [ ] Option to not have permanent encryption key, instead randomly generate one at startup
