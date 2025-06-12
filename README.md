@@ -41,9 +41,9 @@ You can use dotnet on bare metal or use Docker. Docker is more recommended due t
 ### Docker
 ```bash
 git clone https://github.com/SpoofIMEI/CrowbarForum
-cd CrowbarForum
-docker build -t crowbar -f Crowbar/Dockerfile
-docker run --name crowbarforum_instance crowbar
+cd CrowbarForum/Crowbar
+docker build -t crowbar -f Crowbar/Dockerfile .
+docker run --name crowbarforum_instance crowbar # Add -v Crowbar/Database:/app/Database if you want to access the SQLite database from the host.
 ```
 ### Bare metal
 ```bash
