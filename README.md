@@ -36,14 +36,14 @@ All the forums that don't use JS seem to be written in PHP, which is as a langua
 <hr><br><br>
 
 # Installation and usage
-You can use dotnet on bare metal or use Docker. Docker is more recommended due to security reasons.
+You can use dotnet on bare metal or use Docker. Docker is more recommended due to security reasons. It is also recommended to set up a reverse proxy like caddy if you are planning to run this as a clearnet site.
 
 ### Docker
 ```bash
 git clone https://github.com/SpoofIMEI/CrowbarForum
 cd CrowbarForum/Crowbar
 docker build -t crowbar -f Crowbar/Dockerfile .
-docker run --name crowbarforum_instance crowbar # Add -v Crowbar/Database:/app/Database if you want to access the SQLite database from the host.
+docker run --name crowbarforum_instance -p 8080:8080 crowbar # Add -v Crowbar/Database:/app/Database if you want to access the SQLite database from the host.
 ```
 ### Bare metal
 ```bash
