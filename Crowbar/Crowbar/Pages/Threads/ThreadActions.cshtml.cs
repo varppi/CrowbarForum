@@ -79,13 +79,17 @@ namespace Crowbar.Pages.Threads
             Actions = actions;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (Actions.GetSiteSettings().HideThreadsFromNonMembers && !User.Identity.IsAuthenticated)
+                return LocalRedirect("/login");
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!Actions.HasLevelRequired(User, ForumActions.AccessLevelRequired.USER))
+            string[] anonActions = ["download_attachment"];
+            if (!anonActions.Contains(Action ?? "") && !Actions.HasLevelRequired(User, ForumActions.AccessLevelRequired.USER))
                 return Unauthorized();
             var thread = Context.Threads.Find(Id);
             if (thread is null)
@@ -129,6 +133,8 @@ namespace Crowbar.Pages.Threads
                         return NotFound();
                     if (AttachmentId == -1) 
                         return NotFound();
+                    if (Actions.GetSiteSettings().DisableAnonDownloads && !User.Identity.IsAuthenticated)
+                        return LocalRedirect("/login");
                     var attachment = Context.Files.Find(AttachmentId);
                     if (!thread.Attachments.Contains(attachment.Id)) return NotFound();
                     Response.Headers.Add(new("Content-Disposition", $"attachment; filename={attachment.FileName}"));

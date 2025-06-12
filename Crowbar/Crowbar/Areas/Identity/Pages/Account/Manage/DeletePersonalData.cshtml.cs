@@ -4,7 +4,9 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Threading.Tasks;
+using Crowbar.Actions;
 using Crowbar.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,15 +22,18 @@ namespace Crowbar.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<CrowbarUser> _userManager;
         private readonly SignInManager<CrowbarUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly ForumActions _actions;
 
         public DeletePersonalDataModel(
             UserManager<CrowbarUser> userManager,
             SignInManager<CrowbarUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger,
+            ForumActions actions)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _actions = actions;
         }
 
         /// <summary>
@@ -79,7 +84,6 @@ namespace Crowbar.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-
             RequirePassword = await _userManager.HasPasswordAsync(user);
             if (RequirePassword)
             {
@@ -94,16 +98,11 @@ namespace Crowbar.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException($"Unexpected error occurred deleting user.");
-            }
+            var success = await _actions.RemoveUser(User, User.Identity.Name);
+            if (!success)
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Something went wrong! Make sure you're not trying to delete the head admin account!");
 
             await _signInManager.SignOutAsync();
-
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
 
             return Redirect("~/");
         }

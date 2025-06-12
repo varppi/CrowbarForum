@@ -107,6 +107,8 @@ namespace Crowbar.Migrations
                     EnableRegistration = table.Column<bool>(type: "INTEGER", nullable: false),
                     EnableLoginCaptcha = table.Column<bool>(type: "INTEGER", nullable: false),
                     EnableRegistrationCaptcha = table.Column<bool>(type: "INTEGER", nullable: false),
+                    HideThreadsFromNonMembers = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DisableAnonDownloads = table.Column<bool>(type: "INTEGER", nullable: false),
                     FrontPageHtml = table.Column<string>(type: "TEXT", nullable: true),
                     GlobalCss = table.Column<string>(type: "TEXT", nullable: true),
                     ForumName = table.Column<string>(type: "TEXT", nullable: true),

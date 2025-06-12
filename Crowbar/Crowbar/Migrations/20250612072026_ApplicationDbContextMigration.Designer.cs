@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Crowbar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250611142812_ApplicationDbContextMigration")]
+    [Migration("20250612072026_ApplicationDbContextMigration")]
     partial class ApplicationDbContextMigration
     {
         /// <inheritdoc />
@@ -171,6 +171,9 @@ namespace Crowbar.Migrations
                     b.Property<int>("CommentLimit")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("DisableAnonDownloads")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("EnableLoginCaptcha")
                         .HasColumnType("INTEGER");
 
@@ -188,6 +191,9 @@ namespace Crowbar.Migrations
 
                     b.Property<string>("GlobalCss")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("HideThreadsFromNonMembers")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ProfileChangeLimit")
                         .HasColumnType("INTEGER");

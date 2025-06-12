@@ -59,6 +59,8 @@ namespace Crowbar.Utils
                     CommentEditLimit = 120,
                     ProfileChangeLimit = 20,
                     AttachmentLimit = 5,
+                    HideThreadsFromNonMembers = false,
+                    DisableAnonDownloads = true,
                 });
             context.SaveChanges();
         }

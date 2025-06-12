@@ -51,6 +51,10 @@ namespace Crowbar.Pages.Admin.Dashboard
             [Required]
             public string? EnableRegistrationCaptcha { get; set; }
             [Required]
+            public string? DisableAnonDownloads { get; set; }
+            [Required]
+            public string? HideThreadsFromNonMembers { get; set; }
+            [Required]
             public string? FrontPageHtml { get; set; }
             [Required]
             public string? GlobalCss { get; set; }
@@ -86,6 +90,8 @@ namespace Crowbar.Pages.Admin.Dashboard
             InputModifySite.EnableRegistration = siteSettings.EnableRegistration.ToString().ToLower();
             InputModifySite.EnableLoginCaptcha = siteSettings.EnableLoginCaptcha.ToString().ToLower();
             InputModifySite.EnableRegistrationCaptcha = siteSettings.EnableRegistrationCaptcha.ToString().ToLower();
+            InputModifySite.HideThreadsFromNonMembers = siteSettings.HideThreadsFromNonMembers.ToString().ToLower();
+            InputModifySite.DisableAnonDownloads = siteSettings.DisableAnonDownloads.ToString().ToLower();
 
             InputModifySite.FrontPageHtml = siteSettings.FrontPageHtml;
             InputModifySite.GlobalCss = siteSettings.GlobalCss;
@@ -118,6 +124,8 @@ namespace Crowbar.Pages.Admin.Dashboard
                             EnableRegistration= InputModifySite.EnableRegistration == "true",
                             EnableLoginCaptcha= InputModifySite.EnableLoginCaptcha == "true",
                             EnableRegistrationCaptcha= InputModifySite.EnableRegistrationCaptcha == "true",
+                            DisableAnonDownloads= InputModifySite.DisableAnonDownloads == "true",
+                            HideThreadsFromNonMembers= InputModifySite.HideThreadsFromNonMembers == "true",
                             FrontPageHtml = InputModifySite.FrontPageHtml ?? string.Empty,
                             GlobalCss = InputModifySite.GlobalCss ?? string.Empty,
                             ForumName = InputModifySite.ForumName ?? string.Empty,

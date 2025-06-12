@@ -100,8 +100,8 @@ I'm just a single person making this, so it might take a while. Contributions ar
 - [X] More customizable profile (description, pgp key etc)
 - [x] Customizable WAF
 - [ ] Clean up code
-- [ ] Support for hiding threads from non members
-- [ ] Setting to allow or disallow attachment downloads from non members
+- [x] Support for hiding threads from non members
+- [x] Setting to allow or disallow attachment downloads from non members
 - [ ] Admin only threads for announcements
 - [ ] Invite codes
 

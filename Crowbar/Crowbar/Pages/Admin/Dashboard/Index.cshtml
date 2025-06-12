@@ -165,9 +165,19 @@
                 <input asp-for="InputModifySite.EnableLoginCaptcha" type="checkbox" />
             </div>
             <span asp-validation-for="InputModifySite.EnableRegistrationCaptcha" class="text-danger"></span>
-            <div class="mb-3">
+            <div class="mb-1">
                 <label class="fs-5 form-label">Enable captcha for the registration page:</label>
                 <input asp-for="InputModifySite.EnableRegistrationCaptcha" type="checkbox" />
+            </div>
+            <span asp-validation-for="InputModifySite.HideThreadsFromNonMembers" class="text-danger"></span>
+            <div class="mb-1">
+                <label class="fs-5 form-label">Hide threads from non members:</label>
+                <input asp-for="InputModifySite.HideThreadsFromNonMembers" type="checkbox" />
+            </div>
+            <span asp-validation-for="InputModifySite.DisableAnonDownloads" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="fs-5 form-label">Disable attachment downloads from non members:</label>
+                <input asp-for="InputModifySite.DisableAnonDownloads" type="checkbox" />
             </div>
 
             <h4>Rate limits</h4>

@@ -168,6 +168,9 @@ namespace Crowbar.Migrations
                     b.Property<int>("CommentLimit")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("DisableAnonDownloads")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("EnableLoginCaptcha")
                         .HasColumnType("INTEGER");
 
@@ -185,6 +188,9 @@ namespace Crowbar.Migrations
 
                     b.Property<string>("GlobalCss")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("HideThreadsFromNonMembers")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ProfileChangeLimit")
                         .HasColumnType("INTEGER");

@@ -296,7 +296,9 @@ namespace Crowbar.Actions
                     "CommentEditLimit",
                     "ThreadEditLimit",
                     "ProfileChangeLimit",
-                    "AttachmentLimit"
+                    "AttachmentLimit",
+                    "HideThreadsFromNonMembers",
+                    "DisableAnonDownloads"
                 ],
                 alphNumOnly: ["ForumName", "Theme"],
                 under255: ["ForumName", "Theme"],
@@ -322,6 +324,8 @@ namespace Crowbar.Actions
                     CommentEditLimit = newSettings.CommentEditLimit,
                     ProfileChangeLimit = newSettings.ProfileChangeLimit,
                     AttachmentLimit = newSettings.AttachmentLimit,
+                    HideThreadsFromNonMembers = newSettings.HideThreadsFromNonMembers,
+                    DisableAnonDownloads = newSettings.DisableAnonDownloads,
                 });
                 _context.SaveChanges();
                 return true;
@@ -344,6 +348,8 @@ namespace Crowbar.Actions
             settings.CommentEditLimit = newSettings.CommentEditLimit;
             settings.ProfileChangeLimit = newSettings.ProfileChangeLimit;
             settings.AttachmentLimit = newSettings.AttachmentLimit;
+            settings.HideThreadsFromNonMembers = newSettings.HideThreadsFromNonMembers;
+            settings.DisableAnonDownloads = newSettings.DisableAnonDownloads;
             _context.SaveChanges();
             UpdateLimits();
             return true;

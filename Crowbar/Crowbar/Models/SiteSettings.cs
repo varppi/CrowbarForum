@@ -13,6 +13,8 @@ namespace Crowbar.Models
         public bool EnableRegistration { get; set; }
         public bool EnableLoginCaptcha { get; set; }
         public bool EnableRegistrationCaptcha { get; set; }
+        public bool HideThreadsFromNonMembers { get; set; }
+        public bool DisableAnonDownloads { get; set; }
 
         public string? FrontPageHtml
         {

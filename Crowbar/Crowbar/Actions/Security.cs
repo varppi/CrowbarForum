@@ -25,7 +25,7 @@ namespace Crowbar.Actions
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public bool HasLevelRequired<T>(ClaimsPrincipal user, T? targetObject=default) where T : class
         {
-            if (user.Identity is null)
+            if (user is null || user.Identity is null)
                 throw new ArgumentNullException(nameof(user));
             
             // Level USER and ADMIN
