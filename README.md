@@ -5,6 +5,8 @@
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 [![Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white)](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white)
 
+**Keywords for SEO:** No javascript , js free , privacy focused
+
 ### Crowbar Forum, a fully fledged somewhat secure, self hostable forum software built with C#, ASP.NET, Razor that *DOESN'T USE ANY JAVASCRIPT BY DEFAULT*. 
 # Inspiration for the project
 All the forums that don't use JS seem to be written in PHP, which is as a language laughably insecure, so I decided to make my own forum software striving to be more secure and modern than the PHP ones. I decided to go with ASP.NET, because it has good support for generating dynamic HTML content with Razor and, because it has a good inbuilt authentication and authorization system.
