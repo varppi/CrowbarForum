@@ -1,0 +1,33 @@
+﻿@page "/Categories/{Id}"
+@model Crowbar.Pages.Categories.CategoryActionsModel
+@inject ApplicationDbContext context
+@{
+    if (Model.Action != "modify") return;
+    var category = context.Categories.Find(Model.Id);
+    if (category is null) {
+        <p>Category not found</p>
+        return;
+    }
+    var threads = context.Threads.ToList().Where(x => x.Category == Model.Id.ToString());
+    threads.Reverse();
+}
+
+<div class="d-flex justify-content-center">
+    <div>
+        <h2>Modify category</h2>
+        <form class="form-control pb-3 pt-3" method="POST" action="">
+            <input asp-for="Action" value="modify" class="d-none" />
+            <span asp-validation-for="InputModify.Name" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input class="form-control" asp-for="InputModify.Name" />
+                <label class="form-label" asp-for="InputModify.Name">Name:</label>
+            </div>
+            <span asp-validation-for="InputModify.Description" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input class="form-control" asp-for="InputModify.Description" />
+                <label class="form-label" asp-for="InputModify.Description">Description:</label>
+            </div>
+            <button class="w-100 text-white btn btn-warning d-flex justify-content-center align-items-center">Save Category<i class='bx bx-save ps-1'></i></button>
+        </form>
+    </div>
+</div>

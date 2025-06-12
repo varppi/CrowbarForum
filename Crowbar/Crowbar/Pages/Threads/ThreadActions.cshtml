@@ -1,0 +1,247 @@
+﻿@page "/Threads/{Id}"
+@model Crowbar.Pages.Threads.ViewThreadModel
+@using Westwind.AspNetCore.Markdown
+@using Crowbar.Actions
+@inject ApplicationDbContext context
+@inject ForumActions Actions
+@{
+    var thread = context.Threads.Find(Model.Id);
+    if (thread is null)
+    {
+        <p>The thread doesn't exist or it has been deleted.</p>
+        return;
+    }
+    var perPage = 6;
+    var content = thread.Content;
+    var maxPages = 1;
+    var cpage = Model.CPage < 1 ? 1 : Model.CPage;
+    var comments = context.Comments.ToList().Where(x => x.For == Model.Id).ToList();
+    comments.Sort((x, y) => DateTime.Compare(y.Published, x.Published));
+    if (comments.Count > 0) {
+        maxPages = (int)Math.Ceiling(
+            (decimal)(
+                (decimal)comments.Count / (decimal)perPage
+            ));
+        var start = (cpage - 1) * perPage;
+        var end = (comments.Count - start) > perPage ? perPage : (comments.Count - start);
+        if (end <= 0) return;
+        comments = comments.GetRange(start, end);
+    }
+}
+
+@if (Model.Action == "modify") 
+{
+    <h2>Modify thread</h2>
+    <form class="form-control pb-3 pt-3" method="POST" action="" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <input class="d-none" asp-for="Action" value="modify" />
+        <span asp-validation-for="InputModify.Title" class="text-danger"></span>
+        <div class="form-floating mb-3">
+            <input class="form-control" asp-for="InputModify.Title" />
+            <label class="form-label" asp-for="InputModify.Title">Thread title:</label>
+        </div>
+        <span asp-validation-for="InputModify.Content" class="text-danger"></span>
+        <div class="mb-3">
+            <label class="form-label" asp-for="InputModify.Content">Body:</label>
+            <textarea class="form-control" asp-for="InputModify.Content" rows="10"></textarea>
+        </div>
+        <span asp-validation-for="InputModify.Attachments" class="text-danger"></span>
+        <div class="mb-3">
+            @if (thread.Attachments is not null && thread.Attachments.Length != 0) 
+            {
+                <p class="fw-semibold fs-5 m-0">Attachments:</p>
+                @foreach(var attachmentId in thread.Attachments)
+                {
+                    var attachment = context.Files.Find(attachmentId);
+                    if (attachment is null) continue;
+                    <p class="fs-6 m-0 text-body-emphasis">@attachment.FileName</p>
+                }
+                <div class="mb-3 mt-2">
+                    <label class="form-label fs-5 fw-semibold" asp-for="InputModify.RemoveAttachment">Remove attachment:</label>
+                    <select class="form-control" asp-for="InputModify.RemoveAttachment">
+                        <option value="-1">Don't remove anything</option>
+                        @foreach (var attachmentId in thread.Attachments)
+                        {
+                            var attachment = context.Files.Find(attachmentId);
+                            if (attachment is null) continue;
+                            <option class="form-control" value="@attachmentId">@attachment.FileName</option>
+                        }
+                    </select>
+                </div>
+            }
+            <label class="form-label" asp-for="InputModify.Attachments">Upload attachment(s) (optional, size limit 100mb):</label>
+            <input type="file" multiple class="form-control" asp-for="InputModify.Attachments" />
+        </div>
+        <button class="w-100 text-white btn btn-warning d-flex justify-content-center align-items-center">Modify Thread<i class='bx bx-save ps-1'></i></button>
+    </form>
+    return;
+}
+
+
+<section class="border p-2 rounded mb-3">
+    <div class="mb-2">
+        <a href="" class="text-decoration-none fs-3 fw-semibold">@thread.Title</a>
+        <p class="m-0 text-light-emphasis">This post was made by the user <a href="/Profiles/@thread.Creator">@thread.Creator</a> at @thread.Published.ToUniversalTime() universal time.</p> 
+    </div>
+
+    <div class="px-2 mb-2 art-friendly">@Html.Raw(Markdown.Parse(thread.Content, sanitizeHtml: true))</div>
+
+    @if (thread.Attachments is not null) {
+        <div class="d-flex flex-wrap gap-2 mb-2">
+            @foreach(var attachmentId in thread.Attachments)
+            {
+                var attachment = context.Files.Find(attachmentId);
+                if (attachment is null) continue;
+                <div class="border p-1" style="width: fit-content;">
+                    <p class="text-wrap m-0 mb-1"><span class="fw-semibold">Attachment:</span> @attachment.FileName</p>
+                    <form method="POST" action="/Threads/@Model.Id">
+                        @Html.AntiForgeryToken()
+                        <input class="d-none" asp-for="Action" value="download_attachment" />
+                        <input class="d-none" asp-for="AttachmentId" value="@attachmentId" />
+                        <button class="btn btn-sm btn-primary d-flex justify-content-center align-items-center"><i class='pe-1 bxr bx-paperclip'></i>Download Attachment</button>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+    
+
+    @if (User.Identity.Name == thread.Creator || User.IsInRole("admin")) 
+    {
+        <div class="d-flex gap-3">
+            <form action="/Threads/@Model.Id" method="POST">
+                @Html.AntiForgeryToken()
+                <input class="d-none" asp-for="Action" value="delete" />
+                @if (Model.ConfirmAction == "require") 
+                {
+                    <input class="d-none" asp-for="ConfirmAction" value="confirm" />
+                    <button class="p-0 bg-transparent border-0 text-danger text-decoration-none d-flex align-items-center"><i class='bx bx-trash pe-1'></i>Confirm Delete</button>
+                }else {
+                    <button class="p-0 bg-transparent border-0 text-danger text-decoration-none d-flex align-items-center"><i class='bx bx-trash pe-1'></i>Delete</button>
+                }
+            </form>
+            <form action="/Threads/@Model.Id" method="POST">
+                @Html.AntiForgeryToken()
+                <input class="d-none" asp-for="Action" value="modify" />
+                <button class="p-0 bg-transparent border-0 text-warning text-decoration-none d-flex align-items-center"><i class='bx bx-slider pe-1'></i>Modify</button>
+            </form>
+        </div>
+    }
+
+    <div class="border-top border-1 pt-2 mt-2">
+        <div class="d-flex gap-2">
+            <p class="m-0 text-uppercase">Likes: @(thread.Likes is null ? 0 : thread.Likes.Count())</p>
+            <p class="m-0 text-uppercase mb-2">Dislikes: @(thread.Dislikes is null ? 0 : thread.Dislikes.Count())</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2" style="height: 40px;">
+            @if (Actions.HasLikedOrDisliked(User, thread)) {
+                <form action="" method="POST">
+                    <input class="d-none" asp-for="Action" value="remove_like_dislike" />
+                    <button class="btn p-0 text-danger d-flex align-items-center"><i class='bx bx-trash pe-1'></i>Remove Rating</button>
+                </form>
+            }else {
+                <form action="" method="POST">
+                    <input class="d-none" asp-for="Action" value="like" />
+                    <button class="btn p-0"><i class='bx bx-like fs-3 text-success'></i></button>
+                </form>
+                <form action="" method="POST">
+                    <input class="d-none" asp-for="Action" value="dislike" />
+                    <button class="btn p-0 text-danger"><i class='bx bx-dislike fs-3 text-danger'></i></button>
+                </form>
+            }
+        </div>
+    </div>
+</section>
+
+<div class="comments">
+    <h3>Comments</h3>
+    @foreach (var comment in comments)
+    {
+        <div class="rounded p-2">
+            <div class="d-flex gap-2">
+                <div class="border-end border-2 pe-2">
+                    <div class="d-flex justify-content-center w-100">
+                        <img class="pfp" src="/Profiles/@comment.Creator/Picture" />
+                    </div>
+                    <p class="m-0 text-light-emphasis">By <a href="/Profiles/@comment.Creator">@comment.Creator</a></p>
+                    <p class="m-0 text-light-emphaseis" style="font-size: 10px;">@comment.Published.ToUniversalTime()</p>
+                </div>
+                <div class="d-flex flex-column justify-content-between">
+                    @if (comment.ReplyTo > -1) {
+                        var replyComment = context.Comments.Find(comment.ReplyTo);
+                        if (replyComment is not null && replyComment.For == Model.Id)
+                        {
+                            <div class="ms-2 border-start border-2 ps-2">
+                                <p class="fs-5">Reply to user @replyComment.Creator:</p>
+                                <p class="m-0 pb-2 art-friendly mt-2 text-light-emphasis" style="max-height: 350px; overflow-y: scroll;">@replyComment.Content</p>
+                            </div>            
+                        }else {
+                            <div class="ms-2 border-start border-2 ps-2">
+                                <p class="fs-5">Comment deleted</p>
+                            </div>
+                        }
+                    }
+                    <p class="m-0 pb-2 mb-1 art-friendly mt-2" style="max-height: 350px; overflow-y: scroll;">@comment.Content</p>
+                    <div>
+                        <form class="mt-2 mb-2" action="" method="GET">
+                            <input class="d-none" name="ReplyTo"  value="@comment.Id"/>
+                            <button class="p-0 btn text-decoration-underline">Reply</button>
+                        </form>
+                        @if (User.IsInRole("admin") || comment.Creator == User.Identity.Name) {
+                            <div class="d-flex gap-3 mb-2">
+                                <form action="/Threads/@Model.Id/@comment.Id" method="POST">
+                                    @Html.AntiForgeryToken()
+                                    <input class="d-none" name="Action" value="delete" />
+                                    <button class="p-0 bg-transparent border-0 text-danger text-decoration-none d-flex align-items-center"><i class='bx bx-trash pe-1'></i>Delete</button>
+                                </form>
+                                <form action="/Threads/@Model.Id/@comment.Id" method="POST">
+                                    @Html.AntiForgeryToken()
+                                    <input class="d-none" name="Action" value="modify" />
+                                    <button class="p-0 bg-transparent border-0 text-warning text-decoration-none d-flex align-items-center"><i class='bx bx-slider pe-1'></i>Modify</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="d-flex gap-3">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="?CPage=1">Start</a></li> 
+                @for (int i = (cpage < 2 ? 1 : cpage-1); (i<=maxPages && i<=cpage+2); i++) {
+                    <li class="page-item"><a class="page-link" href="?CPage=@(i)">@i</a></li>
+                }
+                <li class="page-item"><a class="page-link" href="?CPage=@maxPages">End</a></li>
+            </ul>
+        </nav>
+        <span>Page @cpage of @maxPages</span>
+    </div>
+    @if (User.Identity.IsAuthenticated) 
+    {
+        <form class="border p-3 pt-2 pb-3" action="" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <span asp-validation-for="ReplyTo" class="text-danger"></span>
+            <span asp-validation-for="Input.Comment" class="text-danger"></span>
+            @if (Model.ReplyTo >= 0) {
+                var comment = context.Comments.Find(Model.ReplyTo);
+                if (comment is null || comment.For != Model.Id) {
+                    <p>Comment not found</p>
+                    return;
+                };
+                <div class="mb-3">
+                    <b class="text-decoration-underline">Replying to user @(comment.Creator)</b><br />
+                    <a class="mt-1 btn btn-sm btn-primary" href="/Threads/@Model.Id">Stop Reply</a>
+                </div>
+            }
+            <div class="mb-3">
+                <label asp-for="Input.Comment" class="form-label">Submit a comment:</label>
+                <textarea asp-for="Input.Comment" class="form-control" rows="10"></textarea>
+            </div>
+            <button class="btn btn-primary d-flex align-items-center">Comment<i class='bx bx-envelope ps-1'></i></button>
+        </form>
+    }
+</div>

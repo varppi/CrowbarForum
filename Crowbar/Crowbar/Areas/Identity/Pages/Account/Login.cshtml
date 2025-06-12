@@ -1,0 +1,47 @@
+﻿@page "/login"
+@model LoginModel
+@using Crowbar.Actions
+@inject ForumActions Actions
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="d-flex justify-content-center">
+    <section>
+        <form style="min-width: 250px; max-width: 500px;" id="account" method="post">
+            <h2>Login.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" />
+                <label asp-for="Input.UserName" class="form-label">Username</label>
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                <label asp-for="Input.Password" class="form-label">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="checkbox mb-3">
+                <label asp-for="Input.RememberMe" class="form-label">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                </label>
+            </div>
+            @if(Actions.GetSiteSettings().EnableLoginCaptcha)
+            {
+                <div class="mb-3">
+                    <altcha-widget challengeurl="/Captcha" style="--altcha-border-radius: 0px; --altcha-color-border: rgb(83, 83, 83);"></altcha-widget>
+                    <p id="remove-if-js-enabled" class="text-danger">The admin asks you to enable JS for a second to complete a POW captcha.</p>
+                </div>
+            }
+            <div>
+                <button id="login-submit" type="submit" class="w-100 btn btn-primary">Log in</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

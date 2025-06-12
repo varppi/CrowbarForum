@@ -1,0 +1,19 @@
+﻿@page "/Threads/{ThreadId}/{CommentId}"
+@model Crowbar.Pages.Threads.CommentActionsModel
+@{
+    @if (Model.Action != "modify") return;
+    ViewData["Title"] = "Modify thread";
+}
+
+<form class="form-control pb-3 pt-3" method="POST" action="">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+    <input asp-for="Action" value="modify" class="d-none" />
+    <span asp-validation-for="Input.Content" class="text-danger"></span>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.Content">Modify Comment:</label>
+        <textarea class="form-control" asp-for="Input.Content" rows="10"></textarea>
+    </div>
+    <button class="mb-3 w-100 btn btn-warning d-flex align-items-center justify-content-center">Save Comment<i class='bx bx-save ps-1'></i></button>
+    <a href="/Threads/@Model.ThreadId">Cancel</a>
+</form>

@@ -1,0 +1,251 @@
+﻿@page
+@model Crowbar.Pages.Admin.Dashboard.IndexModel
+@inject ApplicationDbContext context
+@{
+    ViewData["Title"] = "Admin dashboard";
+
+    var cpage = Model.CPage;
+    if (cpage < 1)
+        cpage = 1;
+
+    var users = context.Users.ToList();
+    users.OrderBy(x => x.UserName);
+    var maxPages = 1;
+    if (users.Count <= 0) return;
+
+    var perPage = 5;
+    maxPages = (int)Math.Ceiling((decimal)((decimal)users.Count / (decimal)perPage));
+    var start = (cpage - 1) * perPage;
+    var end = users.Count - start;
+    if (end > perPage)
+        end = perPage;
+    if (end <= 0)
+        return;
+    users = users.GetRange(start, end);
+    
+}
+
+@if (Model.Action == "modify_user")
+{
+    var roles = context.Roles.ToList();
+    var targetUser = context.Users.ToList().Find(x => x.UserName == Model.Target);
+    var userRoles = context.UserRoles.ToList().Where(x => x.UserId == targetUser.Id);
+
+
+    <div class="w-100 d-flex justify-content-center">
+        <section>
+            <h2>Modify User:</h2>
+            <form style="min-width: 500px;" class="pb-3 pt-3" method="POST" action="">
+                <input class="d-none" asp-for="Action" value="modify_user" />
+                <input class="d-none" asp-for="Target" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <span asp-validation-for="InputModify.Username" class="text-danger"></span>
+                <div class="form-floating mb-3">
+                    <input class="form-control" asp-for="InputModify.Username" />
+                    <label class="form-label" asp-for="InputModify.Username">Username:</label>
+                </div>
+                <span asp-validation-for="InputModify.Password" class="text-danger"></span>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" asp-for="InputModify.Password" />
+                    <label class="form-label" asp-for="InputModify.Password">New password (blank for no password reset):</label>
+                </div>
+                <span asp-validation-for="InputModify.Role" class="text-danger"></span>
+                <div class="mb-3">
+                    <label class="form-label" asp-for="InputModify.Role">Role:</label>
+                    <select class="form-control selection" asp-for="InputModify.Role">
+                        <option selected value="user">user</option>
+                        @foreach (var role in roles)
+                        {
+                            var roleObj = roles.Find(x => x.Id == role.Id);
+                            @if (userRoles.ToList().Any(x => x.RoleId == roleObj.Id)) 
+                            {
+                                <option selected value="@roleObj.Name">@roleObj.Name</option>
+                            }else 
+                            {
+                                <option value="@roleObj.Name">@roleObj.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <button class="w-100 text-white btn btn-warning d-flex justify-content-center align-items-center">Save User<i class='bx bx-save ps-1'></i></button>
+            </form>
+        </section>
+    </div>
+    return;
+}
+
+<div class="d-flex flex-md-row flex-column justify-content-around w-100">
+    <div class="mb-3 w-100 px-2" style="max-width: 600px;">
+        <h3>Users</h3>
+        <div class="border rounded p-3 pb-0 w-100">
+            <div class="row w-100 border-2 border-bottom">
+                <div class="col-2">
+                    <p class="fw-semibold fs-5">Pfp</p>
+                </div>
+                <div class="col-4">
+                    <p class="fw-semibold fs-5">Username</p>
+                </div>
+                <div class="col">
+                    <p class="fw-semibold fs-5">Role</p>
+                </div>
+            </div>
+            @foreach(var user in users)
+            {
+                var role = "user";
+                var roleObj = context.UserRoles.ToList().Find(x => x.UserId == user.Id);
+                if (roleObj is not null)
+                    role = context.Roles.Find(roleObj.RoleId).Name;
+                
+                <div class="row w-100 border-2 border-bottom">
+                    <div class="col-2 d-flex align-items-center mb-1 mt-1">
+                        <img src="/Profiles/@user.UserName/Picture" class="pfp-sm"/>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0 fs-5">@user.UserName</p>
+                    </div>
+                    <div class="col d-flex align-items-center">
+                        <p class="m-0 fs-5">@role</p>
+                    </div>
+                    <div class="mt-1 mb-1 col d-flex gap-2">
+                        <form action="" method="POST">
+                            <input class="d-none" asp-for="Action" value="delete_user" />
+                            <input class="d-none" asp-for="Target" value="@user.UserName"/>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                        <form action="" method="POST">
+                            <input class="d-none" asp-for="Action" value="modify_user" />
+                            <input class="d-none" asp-for="Target" value="@user.UserName" />
+                            <button class="btn btn-sm text-white btn-warning">Modify</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            <div class="d-flex gap-3 mt-3">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" href="?CPage=1">Start</a></li>
+                        @for (int i = (cpage < 2 ? 1 : cpage - 1); (i <= maxPages && i <= cpage + 2); i++)
+                        {
+                            <li class="page-item"><a class="page-link" href="?CPage=@(i)">@i</a></li>
+                        }
+                        <li class="page-item"><a class="page-link" href="?CPage=@maxPages">End</a></li>
+                    </ul>
+                </nav>
+                <span>Page @cpage of @maxPages</span>
+            </div>
+        </div>
+        <h3 class="mt-3">Emergency Actions</h3>
+        <div class="border p-3 d-flex flex-column gap-2">
+            <span class="text-danger" asp-validation-for="Confirmation"></span>
+            <form class="w-100" action="" method="POST">
+                <input class="d-none" asp-for="Action" value="nuke" />
+                <div class="form-floating mb-2">
+                    <input class="form-control" asp-for="Confirmation" />
+                    <label asp-for="Confirmation" class="fs-5 form-label">Write "i want to nuke the forum"</label>
+                </div>
+                <button class="w-100 btn btn-danger d-flex justify-content-center align-items-center">Nuke Forum<i class='bx bx-bomb ps-1'></i></button>
+            </form>
+        </div>
+    </div>
+    <div class="w-100 px-2" style="max-width: 750px;">
+        <h3>Site settings</h3>
+        <form class="border p-3" action="" method="POST">
+            <input class="d-none" asp-for="Action" value="modify_site" />
+            <h4>General</h4>
+            <span asp-validation-for="InputModifySite.EnableRegistration" class="text-danger"></span>
+            <div class="mb-1">
+                <label class="fs-5 form-label">Enable registration:</label>
+                <input asp-for="InputModifySite.EnableRegistration" type="checkbox" />
+            </div>
+            <span asp-validation-for="InputModifySite.EnableLoginCaptcha" class="text-danger"></span>
+            <div class="mb-1">
+                <label class="fs-5 form-label">Enable captcha for the login page:</label>
+                <input asp-for="InputModifySite.EnableLoginCaptcha" type="checkbox" />
+            </div>
+            <span asp-validation-for="InputModifySite.EnableRegistrationCaptcha" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="fs-5 form-label">Enable captcha for the registration page:</label>
+                <input asp-for="InputModifySite.EnableRegistrationCaptcha" type="checkbox" />
+            </div>
+
+            <h4>Rate limits</h4>
+            <p>To disable an action, just set the limit to 0</p>
+            <div class="w-75 row gap-1 mb-3">
+                <div class="col">
+                    <span asp-validation-for="InputModifySite.ThreadLimit" class="text-danger"></span>
+                    <div class="d-flex flex-column">
+                        <label class="fs-5 form-label">Max threads in hour:</label>
+                        <input asp-for="InputModifySite.ThreadLimit" type="number" />
+                    </div>
+                </div>
+                <div class="col">
+                    <span asp-validation-for="InputModifySite.ThreadEditLimit" class="text-danger"></span>
+                    <div class="d-flex flex-column">
+                        <label class="w-100 fs-5 form-label">Max thread edits in hour:</label>
+                        <input asp-for="InputModifySite.ThreadEditLimit" type="number" />
+                    </div>
+                </div>
+            </div>
+            <div class="w-75 row gap-1 mb-4">
+                <div class="col">
+                    <span asp-validation-for="InputModifySite.CommentLimit" class="text-danger"></span>
+                    <div class="d-flex flex-column">
+                        <label class="w-100 fs-5 form-label">Max comments in hour:</label>
+                        <input asp-for="InputModifySite.CommentLimit" type="number" />
+                    </div>
+                </div>
+                <div class="col">
+                    <span asp-validation-for="InputModifySite.CommentEditLimit" class="text-danger"></span>
+                    <div class="d-flex flex-column">
+                        <label class="w-100 mt-1 pb-0 fs-6 form-label">Max comment edits in hour:</label>
+                        <input asp-for="InputModifySite.CommentEditLimit" type="number" />
+                    </div>
+                </div>
+            </div>
+            <div class="w-75 row gap-1 mb-4">
+                <div class="col">
+                    <span asp-validation-for="InputModifySite.ProfileChangeLimit" class="text-danger"></span>
+                    <div class="d-flex flex-column">
+                        <label class="w-100 fs-5 form-label">Profile changes in hour:</label>
+                        <input asp-for="InputModifySite.ProfileChangeLimit" type="number" />
+                    </div>
+                </div>
+                <div class="col">
+                    <span asp-validation-for="InputModifySite.AttachmentLimit" class="text-danger"></span>
+                    <div class="d-flex flex-column">
+                        <label class="w-100 mt-1 fs-5 form-label fs-6">Max amount of attachments:</label>
+                        <input asp-for="InputModifySite.AttachmentLimit" type="number" />
+                    </div>
+                </div>
+            </div>
+
+            <h4>Customization</h4>
+            <span asp-validation-for="InputModifySite.Theme" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="w-100 fs-5 form-label">Front page HTML:</label>
+                <select class="w-100 form-control" asp-for="InputModifySite.Theme">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                </select>
+            </div>
+            <span asp-validation-for="InputModifySite.FrontPageHtml" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="w-100 fs-5 form-label">Front page HTML:</label>
+                <textarea class="w-100 art-friendly" rows="10" asp-for="InputModifySite.FrontPageHtml"></textarea>
+            </div>
+            <span asp-validation-for="InputModifySite.GlobalCss" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="w-100 fs-5 form-label">Global CSS:</label>
+                <textarea class="w-100 art-friendly" rows="10" asp-for="InputModifySite.GlobalCss"></textarea>
+            </div>
+            <span asp-validation-for="InputModifySite.ForumName" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input class="w-100 form-control" asp-for="InputModifySite.ForumName"/>
+                <label asp-for="InputModifySite.ForumName" class="w-100 fs-5 form-label">Forum name:</label>
+            </div>
+            <button class="w-100 btn btn-success d-flex justify-content-center align-items-center">Save Settings<i class='bx bx-save ps-1'></i></button>
+        </form>
+    </div>
+</div>

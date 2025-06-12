@@ -1,0 +1,18 @@
+﻿UNDERWORK: limits
+
+- Pfp-----------------------------------------------------------DONE
+- WAF-----------------------------------------------------------DONE
+- Profiles------------------------------------------------------DONE
+- Likes
+- Ranks (maybe)
+- Custom front page html----------------------------------------DONE
+- Custom css
+- Custom logo
+- Captcha of some sorts (and ability to disable captchas)
+- Locking threads
+- Make role seed resilient--------------------------------------DONE
+- Profile picture in thread and next to comment-----------------DONE
+- Cleaning up
+
+
+-Rendering------------------------------------------------------DONE

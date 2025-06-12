@@ -1,0 +1,120 @@
+select, option, option:hover, select:hover {
+    background-color: var(--bs-body-bg) !important;
+}
+
+.form-control, input, textarea {
+    background: none !important;
+}
+
+textarea {
+    padding: 5px !important;
+}
+
+.rounded, .border, .form-control {
+    border-radius: 5px !important;
+}
+input, select, textarea, button, .btn {
+    border-style: solid;
+    border-radius: 5px !important;
+}
+
+/*
+h4, h5, a, .nav-link, hr {
+    color: white !important;
+}
+
+a {
+    font-size: 18px;
+}
+
+.form-control, textarea, input, .border {
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.25);
+    border-radius: 0px !important;
+    border-width: 1px !important;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.form-control, input, textarea {
+    background: none !important;
+}
+
+.rounded {
+    border-radius: 0px;
+}
+
+textarea {
+    padding: 5px !important;
+}
+
+select, option, option:hover, select:hover {
+    background-color: var(--bs-body-bg) !important;
+}*/
+
+/* The least terrible CSS is below */
+
+@media screen and (max-width: 900px) {
+    .pfp {
+        max-width: 75px !important;
+        max-height: 75px !important;
+    }
+}
+
+.pfp {
+    max-width: 100px;
+    max-height: 100px;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 0px;
+}
+
+.pfp-lg {
+    max-width: 160px;
+    max-height: 160px;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 0px;
+}
+
+.pfp-sm {
+    max-width: 40px;
+    max-height: 40px;
+    border-radius: 0px;
+}
+
+.art-friendly {
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 15px;
+    font-family: monospace;
+}
+
+/* The most unprofessional CSS is below */
+
+html {
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}

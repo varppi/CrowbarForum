@@ -1,0 +1,32 @@
+﻿@using Crowbar.Models
+@inject SignInManager<CrowbarUser> SignInManager
+@inject UserManager<CrowbarUser> UserManager
+
+<ul class="d-flex gap-3">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (User.IsInRole("admin")) 
+        {
+            <li class="list-inline">
+                <a class="fs-5 nav-link text-danger d-flex align-items-center" asp-area="" asp-page="/Admin/Dashboard/Index" title="Manage"><i class='bx bx-gear' style="padding-right: 3px;"></i>Admin</a>
+            </li>
+        }
+        <li class="list-inline">
+            <a class="fs-5 align-items-center d-flex nav-link text-success" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class='bx bx-user pe-1'></i>Account</a>
+        </li>
+        <li class="list-inline">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                <button class="text-uppercase fs-5 nav-link  d-flex align-items-center text-warning"><i class='bx bx-door pe-1'></i>Logout</button>
+            </form>
+        </li>
+        return;
+    }
+
+<li class="list-inline">
+        <a class="fs-5 nav-link d-flex align-items-center" asp-area="Identity" asp-page="/Account/Register"><i class='bx bx-user-plus pe-1'></i>Register</a>
+</li>
+<li class="list-inline">
+        <a class="fs-5 nav-link d-flex align-items-center" asp-area="Identity" asp-page="/Account/Login"><i class='bx bx-lock-open pe-1'></i>Login</a>
+</li>
+
+</ul>

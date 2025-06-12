@@ -1,0 +1,47 @@
+﻿@page
+@model Crowbar.Pages.Threads.NewModel
+@inject ApplicationDbContext context
+@{
+    var categories = context.Categories.ToList();
+    ViewData["Title"] = "Add new thread";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="border p-3 rounded">
+    <form method="POST" action="" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <span asp-validation-for="Input.Title" class="text-danger"></span>
+        <div class="form-floating mb-3">
+            <input class="form-control" asp-for="Input.Title" />
+            <label class="form-label" asp-for="Input.Title">Thread title:</label>
+        </div>
+        <span asp-validation-for="Input.Category" class="text-danger"></span>
+        <div class="form-floating mb-3">
+            <select class="form-control" asp-for="Input.Category">
+                @foreach(var category in categories)
+                {
+                    @if (Model.Category == category.Id) 
+                    {
+                        <option class="text-dark" selected value="@category.Id">@category.Name</option>
+                        continue;
+                    }
+                    <option class="text-dark" value="@category.Id">@category.Name</option>
+                }
+            </select>
+            <label class="form-label" asp-for="Input.Category">Category:</label>
+        </div>
+        <span asp-validation-for="Input.Content" class="text-danger"></span>
+        <div class="mb-3">
+            <label class="form-label" asp-for="Input.Content">Body (markdown supported):</label>
+            <textarea class="form-control" asp-for="Input.Content" rows="10"></textarea>
+        </div>
+        <span asp-validation-for="Input.Attachments" class="text-danger"></span>
+        <div class="mb-3">
+            <label class="form-label" asp-for="Input.Attachments">Upload attachment(s) (optional, size limit 100mb):</label>
+            <input type="file" multiple class="form-control" asp-for="Input.Attachments" />
+        </div>
+        <button class="mb-3 w-100 btn btn-primary d-flex align-items-center justify-content-center">Create Thread<i class='bx bx-plus ps-1'></i></button>
+        <a href="/Threads@($"?Category={Model.Category}")">Cancel</a>
+    </form>
+</div>

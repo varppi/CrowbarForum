@@ -1,0 +1,86 @@
+﻿@page
+@model Crowbar.Pages.Categories.IndexModel
+@inject ApplicationDbContext context
+@{
+    ViewData["Title"] = "All categories";
+
+    var cpage = Model.CPage;
+    if (cpage < 1)
+        cpage = 1;
+    var categories = context.Categories.ToList();
+    var perPage = 10;
+    categories.Reverse();
+    var maxPages = 1;
+    if (categories.Count > 0)
+    {
+        maxPages = (int)Math.Ceiling(
+            (decimal)(
+                (decimal)categories.Count / (decimal)perPage
+            ));
+        var start = (cpage - 1) * perPage;
+        var end = categories.Count - start;
+        if (end > perPage)
+            end = perPage;
+        if (end <= 0)
+            return;
+        categories = categories.GetRange(start, end);
+    }
+}
+
+<div class="p-3 rounded mb-3">
+    <h2>@ViewData["Title"]</h2>
+    @if (categories.Count == 0) 
+    {
+        <p>&lt;There are no categories yet&gt;</p>
+    }
+    @foreach (var category in categories)
+    {
+        <div class="fs-6 ps-2 mb-2 mt-2 border rounded w-100 d-flex">
+            @if(User.IsInRole("admin")) 
+            {
+                <div class="d-flex flex-column gap-1 border-end border-1 me-2 p-2 ps-0 gap-2">
+                    <form action="/Categories/@category.Id" method="POST">
+                        @Html.AntiForgeryToken()
+                        <input name="Action" value="modify" class="d-none" />
+                        <button class="p-0 bg-transparent border-0 text-warning text-decoration-none fs-5 d-flex align-items-center"><i class='bx bx-slider pe-1'></i>Modify</button>
+                    </form>
+                    <form action="/Categories/@category.Id" method="POST">
+                        @Html.AntiForgeryToken()
+                        <input name="Action" value="delete" class="d-none" />
+                        @if (Model.ConfirmAction == "require" && Model.ConfirmFor == category.Id)
+                        {
+                            <input class="d-none" asp-for="ConfirmAction" value="confirm" />
+                            <button class="p-0 bg-transparent border-0 text-danger text-decoration-none d-flex align-items-center fs-6"><i class='bx bx-trash pe-1'></i>Confirm Delete</button>
+                        }
+                        else
+                        {
+                            <button class="p-0 bg-transparent border-0 text-danger text-decoration-none d-flex align-items-center fs-5"><i class='bx bx-trash pe-1'></i>Delete</button>
+                        }
+                    </form>
+                </div>
+            }
+            <div class="d-flex align-items-center">
+                <a href="/Categories/@category.Id" class="m-1 border-1 pe-2 border-end text-decoration-none fw-semibold fs-4">@category.Name</a>
+                <p class="m-0 ms-2 text-wrap text-break">@category.Description</p>
+            </div>
+        </div>
+    }
+
+    <div class="d-flex gap-3">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="?CPage=1">Start</a></li>
+                @for (int i = (cpage < 2 ? 1 : cpage - 1); (i <= maxPages && i <= cpage + 2); i++)
+                {
+                    <li class="page-item"><a class="page-link" href="?CPage=@(i)">@i</a></li>
+                }
+                <li class="page-item"><a class="page-link" href="?CPage=@maxPages">End</a></li>
+            </ul>
+        </nav>
+        <span>Page @cpage of @maxPages</span>
+    </div>
+</div>
+@if (User.IsInRole("admin")) 
+{
+    <a asp-page="/Categories/New">Create new category</a>
+}

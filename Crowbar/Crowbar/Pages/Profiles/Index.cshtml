@@ -1,0 +1,74 @@
+﻿@page "/Profiles/{Name}"
+@model Crowbar.Pages.Profiles.IndexModel
+@using Crowbar.Models
+@inject ApplicationDbContext context
+@inject UserManager<CrowbarUser> userManager
+@{
+    var cpage = Model.CPage < 1 ? 1 : Model.CPage;
+    var threads = Model.Threads.ToList();
+    var perPage = 10;
+    threads.Sort((x, y) => DateTime.Compare(y.Published, x.Published));
+    var maxPages = 1;
+    if (threads.Count > 0)
+    {
+        maxPages = (int)Math.Ceiling(
+            (decimal)(
+                (decimal)threads.Count / (decimal)perPage
+            )); 
+        var start = (cpage - 1) * perPage;
+        var end = (threads.Count - start) > perPage ? perPage : (threads.Count - start);
+        if (end <= 0)
+            return;
+        threads = threads.GetRange(start, end);
+    }
+}
+
+<div class="w-100 d-flex gap-3">
+    <section>
+        <div class="border p-2" style="width: fit-content;">
+            <img class="pfp-lg" src="/Profiles/@Model.Name/Picture" />
+            <p class="fs-4 m-0"><b>@Model.ProfileUser.UserName</b> (@Model.Role)</p>
+            <p class="fs-6 m-0">Threads: @Model.Threads.Count()</p>
+            <p class="fs-6 m-0">Comments: @Model.Comments.Count()</p>
+        </div>
+    </section>
+    <div class="w-100">
+        <h2>The User's description</h2>
+        <p class="border art-friendly p-1 mb-3 w-100" style="overflow-y: scroll; max-height: 400px;">@((await userManager.FindByNameAsync(User.Identity.Name)).Description)</p>
+        <h2>Threads made by the user</h2>
+        @if (Model.Threads.Count() == 0) 
+        {
+            <p>&lt;This user hasn't made any threads yet&gt;</p>
+        }
+        @foreach(var thread in threads) 
+        {
+            var threadCategory = context.Categories.Find(int.Parse(thread.Category));
+            <div class="fs-6 d-flex justify-content-between p-1 mb-2 mt-2 border rounded w-100">
+                <div>
+                    <p class="text-light-emphasis m-0 me-2">
+                        Posted by <a href="/Profiles/@thread.Creator">@thread.Creator</a> | On <a href="/Categories/@threadCategory.Id">@threadCategory.Name</a> | @thread.Published.ToUniversalTime()
+                    </p>
+                    <a href="/Threads/@thread.Id" class="text-decoration-none fw-semibold m-0 fs-4">
+                        @(thread.Title.Length > 50 ?
+                            thread.Title.Substring(0, 47) + "..." :
+                            thread.Title)
+                    </a>
+                </div>
+            </div>
+        }
+
+        <div class="d-flex gap-3">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="?CPage=1">Start</a></li>
+                    @for (int i = (cpage < 2 ? 1 : cpage - 1); (i <= maxPages && i <= cpage + 2); i++)
+                    {
+                        <li class="page-item"><a class="page-link" href="?CPage=@(i)">@i</a></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="?CPage=@maxPages">End</a></li>
+                </ul>
+            </nav>
+            <span>Page @cpage of @maxPages</span>
+        </div>
+    </div>
+</div>

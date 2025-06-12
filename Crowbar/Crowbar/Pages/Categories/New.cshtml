@@ -1,0 +1,26 @@
+﻿@page
+@model Crowbar.Pages.Categories.NewModel
+@inject ApplicationDbContext context
+@{
+    var categories = context.Categories.ToList();
+    ViewData["Title"] = "Add new category";
+}
+
+<div class="d-flex justify-content-center w-100">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <form style="max-width: 600px;" class="pb-3 pt-3" method="POST" action="">
+            <span asp-validation-for="Input.Name" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input class="form-control" asp-for="Input.Name" />
+                <label class="form-label" asp-for="Input.Name">Category title:</label>
+            </div>
+            <span asp-validation-for="Input.Description" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input class="form-control" asp-for="Input.Description" />
+                <label class="form-label" asp-for="Input.Description">Category description:</label>
+            </div>
+            <button class="w-100 btn btn-primary d-flex align-items-center justify-content-center">Create Category<i class='bx bx-plus ps-1'></i></button>
+        </form>
+    </div>
+</div>

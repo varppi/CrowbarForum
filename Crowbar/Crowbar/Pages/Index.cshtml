@@ -1,0 +1,12 @@
+﻿@page
+@using Crowbar.Encryption
+@model IndexModel
+@inject ApplicationDbContext context
+@{
+    ViewData["Title"] = "Home page";
+    var frontHtml = "";
+    if (context.SiteSettings.Any())
+        frontHtml = context.SiteSettings.First().FrontPageHtml;
+}
+
+@Html.Raw(frontHtml)

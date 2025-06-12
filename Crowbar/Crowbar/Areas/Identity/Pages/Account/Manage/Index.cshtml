@@ -1,0 +1,90 @@
+﻿@page "/account"
+@model IndexModel
+@using Crowbar.Actions
+@using Crowbar.Data
+@inject ForumActions Actions;
+@inject ApplicationDbContext context;
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<div class="row gap-3">
+    <div class="col-md-6">
+        <h3>Profile</h3>
+        <form id="profile-form" method="post" class="form-floating mb-4" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <span asp-validation-for="InputModify.UserName" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input asp-for="InputModify.UserName" class="form-control" placeholder="Please choose your username." />
+                <label asp-for="InputModify.UserName" class="form-label"></label>
+            </div>
+            <div class="mb-2">
+                <img class="mb-3 pfp-lg" src="/Profiles/@User.Identity.Name/Picture" />
+                <br />
+                @if (Model.InputModify.RemoveProfilePicture is not null)
+                {
+                    <label class="form-label fs-5" asp-for="InputModify.RemoveProfilePicture">Remove profile picture:</label>
+                    <input type="checkbox" asp-for="InputModify.RemoveProfilePicture" />
+                }
+                else
+                {
+                    <label class="form-label" asp-for="InputModify.ProfilePicture">Upload profile picture:</label>
+                    <input type="file" class="form-control" asp-for="InputModify.ProfilePicture" />
+                }
+                <br />
+                <span asp-validation-for="InputModify.ProfilePicture" class="text-danger"></span>
+            </div>
+            <span asp-validation-for="InputModify.Description" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="form-label" asp-for="InputModify.Description">Description:</label>
+                <textarea rows="10" asp-for="InputModify.Description" class="form-control art-friendly"></textarea>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 text-white btn btn-success d-flex justify-content-center align-items-center">Save<i class='bx bx-save ps-1'></i></button>
+        </form>
+        <div class="form-floating mb-2">
+            <a href="/Profiles/@User.Identity.Name" class="w-100 btn btn-primary d-flex justify-content-center align-items-center">View Public Profile<i class='bx bx-user ps-1'></i></a>
+        </div>
+        <div class="form-floating mb-2">
+            <a href="/account/changepassword" class="w-100 btn btn-primary d-flex justify-content-center align-items-center">Change Password<i class='bx bx-lock-open ps-1'></i></a>
+        </div>
+        @if (!Model.Is2fa) {
+            <div class="form-floating mb-2">
+                <a href="/account/EnableAuthenticator" class="w-100 btn btn-primary d-flex justify-content-center align-items-center">Enable 2FA<i class='bx bx-key ps-1'></i></a>
+            </div>
+        }else {
+            <div class="form-floating mb-2">
+                <a href="/account/TwoFactorAuthentication" class="w-100 btn btn-primary d-flex justify-content-center align-items-center">Manage 2FA<i class='bx bx-key ps-1'></i></a>
+            </div>
+        }
+        <div>
+            <a href="/account/DeletePersonalData" class="w-100 btn btn-danger d-flex justify-content-center align-items-center">Delete Account<i class='bx bx-trash ps-1'></i></a>
+        </div>
+    </div>
+    <div class="col">
+        <h3>Your most recent threads</h3>
+        @foreach(var thread in Actions.GetThreads(User, User.Identity.Name).Take(5)) 
+        {
+            var comments = context.Comments.ToList().Where(x => x.For == thread.Id).ToList();
+            var threadCategory = context.Categories.Find(int.Parse(thread.Category));
+            <div class="fs-6 d-flex justify-content-between p-2 mb-2 mt-2 border rounded w-100">
+                <div class="d-flex flex-column">
+                    <p class="text-light-emphasis m-0 me-2">
+                        Posted by <a href="/Profiles/@thread.Creator">@thread.Creator</a> | On <a href="/Categories/@threadCategory.Id">@threadCategory.Name</a> | @thread.Published.ToUniversalTime()
+                    </p>
+                    <a href="/Threads/@thread.Id" class="text-decoration-none fw-semibold fs-4 m-0">
+                        @(thread.Title.Length > 50 ?
+                            thread.Title.Substring(0, 47) + "..." :
+                            thread.Title)
+                    </a>
+                    <p class="m-0 fs-6">@thread.Likes.Count() Likes, @thread.Dislikes.Count() Dislikes</p>
+                    <b class="mt-2 fs-5">Comments: @comments.Count</b>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

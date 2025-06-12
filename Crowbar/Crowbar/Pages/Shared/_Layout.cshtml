@@ -1,0 +1,83 @@
+﻿@inject Actions.ForumActions Actions;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @Actions.GetSiteSettings().ForumName</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Crowbar.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/icons/fonts/basic/boxicons.css"  />
+
+    <script async defer type="module" src="/js/altcha.min.js"></script>
+    <script>
+        window.stop();
+        document.getElementsByTagName("html")[0].innerHTML = "";
+        alert("Your browser is ignoring the Content-Security-Policy header of this site. This allows for malicious JS execution. Please update your browser.");
+    </script>
+    <style>
+        @if (Actions.GetSiteSettings().Theme == "dark") {
+            @Html.Raw(@"
+a,h1,h2,h3,h4,h5 {
+    color: white !important;
+}
+
+.form-control, textarea, input, .border {
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.25);
+    border-width: 1px !important;
+}
+            ");
+        }
+        @Html.Raw(Actions.GetSiteSettings().GlobalCss);
+    </style>
+</head>
+<body data-bs-theme="@Actions.GetSiteSettings().Theme">
+    <header>
+        <nav style="margin-top: -2px; margin-left: -2px;" class="navbar border-bottom px-xl-3 mb-3">
+            <div class="w-100 d-flex justify-content-center">
+                <a class="d-block d-xl-none fs-3 navbar-brand px-0 me-2" asp-area="" asp-page="/Index">@Actions.GetSiteSettings().ForumName</a>
+            </div>
+
+            <div class="d-flex flex-xl-row flex-column-reverse w-100 px-lg-2">
+                <div class="col d-flex w-100 justify-content-start">
+                    <a class="d-none d-xl-block navbar-brand px-0 me-2" asp-area="" asp-page="/Index">@Actions.GetSiteSettings().ForumName</a>
+                    <ul class="d-flex justify-content-start gap-3 mt-2">
+                        <li class="list-inline">
+                            <a class="d-flex align-items-center fs-5 fw-semibold nav-link" asp-area="" asp-page="/Index"><i class="bx bx-home pe-1"></i>Home</a>
+                        </li>
+                        <li class="list-inline">
+                            <a class="d-flex align-items-center fs-5 fw-semibold nav-link" asp-area="" asp-page="/Categories/Index"><i class='bx bx-categories pe-1'></i>Categories</a>
+                        </li>
+                        <li class="list-inline">
+                            <a class="d-flex align-items-center fs-5 fw-semibold nav-link text-nowrap" asp-area="" asp-page="/Threads/Index"><i class='bx bx-discussion pe-1'></i>All Threads</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col w-100 d-flex justify-content-xl-center justify-content-start mt-2">
+                    <partial name="_LoginPartial" />
+                </div>
+                <div class="col w-100 d-flex justify-content-end mt-2">
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            Powered by <a href="https://github.com/spoofimei/CrowbarForum">Crowbar Forum</a>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>document.getElementById("remove-if-js-enabled").remove();</script>
+</body>
+</html>

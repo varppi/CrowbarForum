@@ -1,0 +1,25 @@
+﻿@page
+@model Crowbar.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Set up admin account";
+}
+
+<div class="justify-content-center d-flex w-100">
+    <section>
+        <form class="form-control p-3" action="" method="POST">
+            <h2 class="mb-3">Create a password for the "admin" user</h2>
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" asp-for="Input.Password"/>
+                <label asp-for="Input.Password" class="form-label">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" asp-for="Input.Password2" />
+                <label asp-for="Input.Password2" class="form-label">Repeat Password</label>
+                <span asp-validation-for="Input.Password2" class="text-danger"></span>
+            </div>
+            <button class="w-100 btn btn-primary">Set Password</button>
+        </form>
+    </section>
+</div>
