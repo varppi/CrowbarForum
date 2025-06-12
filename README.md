@@ -13,6 +13,8 @@ All the forums that don't use JS seem to be written in PHP, which is as a langua
 - **Basic forum features like creating threads, comments etc...**
 - **Altcha <img height=25 src="https://github.com/user-attachments/assets/792840a7-482d-470b-80f7-1bc93a184049"> POW catpcha integration (the only thing that uses JS in the whole project)**
 - **Rate limits**
+- **Admin only categories**
+- **Can make threads visible to members only**
 - **Customizable**
 - **Markdown support**
 ### Security related
