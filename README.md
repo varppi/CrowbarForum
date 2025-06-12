@@ -48,9 +48,9 @@ docker run --name crowbarforum_instance crowbar # Add -v Crowbar/Database:/app/D
 ### Bare metal
 ```bash
 git clone https://github.com/SpoofIMEI/CrowbarForum
-cd CrowbarForum/Crowbar
+cd CrowbarForum/Crowbar/Crowbar
 dotnet tool install --global dotnet-ef 
-export PATH=$PATH:~/.dotnet # Optional, add dotnet tool path to your $PATH variable
+export PATH=$PATH:~/.dotnet # Adding dotnet tool path to your $PATH variable (optional)
 dotnet ef migrations remove 
 dotnet ef migrations add ApplicationDbContextMigration
 dotnet ef database update 
