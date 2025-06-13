@@ -50,7 +50,7 @@ namespace Crowbar.Utils
                     EnableLoginCaptcha = false,
                     EnableRegistrationCaptcha = false,
                     FrontPageHtml = "<h1>Welcome!</h1>",
-                    GlobalCss = "",
+                    GlobalCss = string.Empty,
                     ForumName = "Crowbar",
                     Theme = "dark",
                     ThreadLimit = 2,
@@ -61,6 +61,7 @@ namespace Crowbar.Utils
                     AttachmentLimit = 5,
                     HideThreadsFromNonMembers = false,
                     DisableAnonDownloads = true,
+                    InviteOnly = string.Empty,
                 });
             context.SaveChanges();
         }

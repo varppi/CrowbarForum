@@ -9,6 +9,26 @@ namespace Crowbar.Actions
 {
     public partial class ForumActions
     {
+
+        public async Task<string[]> GetInviteCodes(ClaimsPrincipal user)
+        {
+            if (!HasLevelRequired(user, AccessLevelRequired.USER))
+                return [];
+            var userManager = GetUserManager();
+
+            var crowbarUser = await userManager.FindByNameAsync(user.Identity.Name);
+            if (crowbarUser is null || crowbarUser.InviteCodes is null) return [];
+            return crowbarUser.InviteCodes;
+        }
+
+        public async Task<string[]> GetInviteCodes()
+        {
+            List<string> codes = new();
+            foreach (var user in _context.Users)
+                codes.AddRange(user.InviteCodes);
+            return codes.ToArray();
+        }
+
         /// <summary>
         /// Checks if a user has liked a specific thread.
         /// </summary>

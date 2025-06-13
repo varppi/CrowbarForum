@@ -42,6 +42,13 @@
             </div>
             <button id="update-profile-button" type="submit" class="w-100 text-white btn btn-success d-flex justify-content-center align-items-center">Save<i class='bx bx-save ps-1'></i></button>
         </form>
+        @if (Actions.GetSiteSettings().InviteOnly != "anyone") 
+        {
+            <form method="POST" action="/account/invitecodes" class="form-floating mb-2">
+                @Html.AntiForgeryToken()
+                <button class="w-100 btn btn-primary d-flex justify-content-center align-items-center">Generate Invite Codes<i class='bx bx-printer ps-1'></i></button>
+            </form>
+        }
         <div class="form-floating mb-2">
             <a href="/Profiles/@User.Identity.Name" class="w-100 btn btn-primary d-flex justify-content-center align-items-center">View Public Profile<i class='bx bx-user ps-1'></i></a>
         </div>

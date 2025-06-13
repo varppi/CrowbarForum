@@ -28,6 +28,14 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            @if (Actions.GetSiteSettings().InviteOnly != "anyone") 
+            {
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.InvitationCode" class="form-control" autocomplete="new-password" aria-required="true" />
+                    <label asp-for="Input.InvitationCode">Invitation code</label>
+                    <span asp-validation-for="Input.InvitationCode" class="text-danger"></span>
+                </div>
+            }
             @if (Actions.GetSiteSettings().EnableRegistrationCaptcha)
             {
                 <div class="mb-3">

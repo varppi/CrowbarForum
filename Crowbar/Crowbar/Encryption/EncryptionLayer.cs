@@ -17,9 +17,9 @@ namespace Crowbar.Encryption
         private static byte[]? key;
         private static byte[]? iv;
 
-        private static string randomText(int length)
+        public static string RandomText(int length)
         {
-            var characters = "qwertyuiopasdfghjklzxcvbnm";
+            var characters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789";
             var output = new StringBuilder();
             for (var i = 0; i < length; i++)
                 output.Append(characters[new Random().Next(characters.Length)]);
@@ -31,14 +31,14 @@ namespace Crowbar.Encryption
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static string Obfuscate(string data) => $"{data}{randomText(16)}";
+        public static string Obfuscate(string data) => $"{data}{RandomText(16)}";
 
         /// <summary>
         /// Makes the encrypted base64 unique each time
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static byte[] Obfuscate(byte[] data) => data.Concat(Encoding.UTF8.GetBytes(randomText(16))).ToArray();
+        public static byte[] Obfuscate(byte[] data) => data.Concat(Encoding.UTF8.GetBytes(RandomText(16))).ToArray();
 
         /// <summary>
         /// Removes the randomized last 16 characters.

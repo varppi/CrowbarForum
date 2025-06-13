@@ -13,6 +13,7 @@ namespace Crowbar.Models
         private string? _userName;
         private string? _profilePicture;
         private string? _description;
+        private string[]? _inviteCodes;
 
         [NotMapped]
         public override string? Email { get; set; } = "none@none.none";
@@ -30,6 +31,10 @@ namespace Crowbar.Models
         {
             get => EncryptionLayer.DecryptString(_description);
             set => _description = EncryptionLayer.Encrypt(value);
+        }
+        public string[]? InviteCodes { 
+            get => EncryptionLayer.DecryptStringList(_inviteCodes);
+            set => _inviteCodes = EncryptionLayer.Encrypt(value);
         }
     }
 }

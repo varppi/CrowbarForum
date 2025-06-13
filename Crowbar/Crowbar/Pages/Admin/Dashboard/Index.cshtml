@@ -179,6 +179,15 @@
                 <label class="fs-5 form-label">Disable attachment downloads from non members:</label>
                 <input asp-for="InputModifySite.DisableAnonDownloads" type="checkbox" />
             </div>
+            <span asp-validation-for="InputModifySite.InviteOnly" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="fs-5 form-label">Registration mode:</label>
+                <select asp-for="InputModifySite.InviteOnly" class="form-control">
+                    <option value="anyone">Anyone can register</option>
+                    <option value="user">User must give invite code</option>
+                    <option value="admin">Admin must give invite code</option>
+                </select>
+            </div>
 
             <h4>Rate limits</h4>
             <p>To disable an action, just set the limit to 0</p>

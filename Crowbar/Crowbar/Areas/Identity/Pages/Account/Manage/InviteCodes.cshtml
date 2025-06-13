@@ -1,0 +1,18 @@
+﻿@page "/account/invitecodes"
+@model Crowbar.Areas.Identity.Pages.Account.Manage.InviteCodesModel
+@{
+    ViewData["Title"] = "Invite codes";
+}
+
+<div class="d-flex justify-content-center">
+    <div style="max-width: 750px;">
+        <h3>Here are your invite codes. Keep them safe.</h3>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <code>
+            @foreach (var inviteCode in Model.InviteCodes) 
+            {
+                <p class="m-0 mb-1 fs-5">@inviteCode</p>
+            }
+        </code>
+    </div>
+</div>

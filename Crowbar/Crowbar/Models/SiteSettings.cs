@@ -8,6 +8,7 @@ namespace Crowbar.Models
         private string? _frontPageHtml;
         private string? _globalCss;
         private string? _theme;
+        private string? _inviteOnly;
 
         public int Id { get; set; }
         public bool EnableRegistration { get; set; }
@@ -15,7 +16,11 @@ namespace Crowbar.Models
         public bool EnableRegistrationCaptcha { get; set; }
         public bool HideThreadsFromNonMembers { get; set; }
         public bool DisableAnonDownloads { get; set; }
-
+        public string? InviteOnly
+        {
+            get => EncryptionLayer.DecryptString(_inviteOnly);
+            set => _inviteOnly = EncryptionLayer.Encrypt(value);
+        }
         public string? FrontPageHtml
         {
             get => EncryptionLayer.DecryptString(_frontPageHtml);

@@ -133,6 +133,16 @@ namespace Crowbar.Actions
             return true;
         }
 
+
+        /// <summary>
+        /// Checks the validity of an invitation code.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns>'True' for "Invitation code is valid" and 'False' for "not valid"</returns>
+        public async Task<bool> ValidateInvitationCode(string code)
+            => (await GetInviteCodes()).Contains(code);
+
+
         public SignInManager<CrowbarUser> GetSignInManager()
             => (SignInManager<CrowbarUser>)_context.GetService(typeof(SignInManager<CrowbarUser>));
         public UserManager<CrowbarUser> GetUserManager()

@@ -111,6 +111,7 @@ namespace Crowbar.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            public string InvitationCode { get; set; }
         }
 
 
@@ -125,6 +126,15 @@ namespace Crowbar.Areas.Identity.Pages.Account
             {
                 ModelState.AddModelError(string.Empty, "registration is disabled");
                 return Page();
+            }
+            if (_actions.GetSiteSettings().InviteOnly != "anyone")
+            {
+                var valid = await _actions.ValidateInvitationCode(Input.InvitationCode);
+                if (!valid)
+                {
+                    ModelState.AddModelError("Input.InvitationCode", "the invitation code is invalid");
+                    return Page();
+                }
             }
 
             returnUrl ??= Url.Content("~/");

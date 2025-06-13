@@ -166,13 +166,16 @@ namespace Crowbar.Actions
         {
             if (!HasLevelRequired(user, target))            
                 return false;
+            //updatedUser.Description ??= target.Description;
+            //updatedUser.UserName ??= target.UserName;
+            //updatedUser.InviteCodes ??= target.InviteCodes;
+            //updatedUser.ProfilePicture ??= target.ProfilePicture;
             
             var roleManager = GetRoleManger();
             var userManager = GetUserManager();
 
             var username = updatedUser.UserName.ToLower().Trim();
             var userEditing = await userManager.FindByNameAsync(user.Identity.Name);
-            updatedUser.Description ??= "";
             
             var targetRole = await roleManager.FindByNameAsync("admin");
             var targetIsAdmin = _context.UserRoles.ToList().Find(x => x.RoleId == targetRole.Id && x.UserId == target.Id) is not null;
@@ -224,7 +227,7 @@ namespace Crowbar.Actions
                 return false;
             }
 
-            if (updatedUser.Description.Length > 2500)
+            if ((updatedUser.Description??"").Length > 2500)
             {
                 modelState.AddModelError("InputModify.Description", "description is too long");
                 return false;
@@ -259,6 +262,7 @@ namespace Crowbar.Actions
             target.ProfilePicture = updatedUser.ProfilePicture;
             target.UserName = username;
             target.Description = updatedUser.Description;
+            target.InviteCodes = updatedUser.InviteCodes;
             if (!password.IsNullOrEmpty())
             {
                 string resetToken = await userManager.GeneratePasswordResetTokenAsync(target);
@@ -298,7 +302,8 @@ namespace Crowbar.Actions
                     "ProfileChangeLimit",
                     "AttachmentLimit",
                     "HideThreadsFromNonMembers",
-                    "DisableAnonDownloads"
+                    "DisableAnonDownloads",
+                    "InviteOnly"
                 ],
                 alphNumOnly: ["ForumName", "Theme"],
                 under255: ["ForumName", "Theme"],
@@ -306,6 +311,11 @@ namespace Crowbar.Actions
                 modelState: modelState);
             if (!isValid)
                 return false;
+            if (!((string[])["user", "admin", "anyone"]).Contains(newSettings.InviteOnly))
+            {
+                modelState.AddModelError("InputModifySite.InviteOnly", "invalid value");
+                return false;
+            }
 
             if (!_context.SiteSettings.Any())
             {
@@ -326,6 +336,7 @@ namespace Crowbar.Actions
                     AttachmentLimit = newSettings.AttachmentLimit,
                     HideThreadsFromNonMembers = newSettings.HideThreadsFromNonMembers,
                     DisableAnonDownloads = newSettings.DisableAnonDownloads,
+                    InviteOnly = newSettings.InviteOnly,
                 });
                 _context.SaveChanges();
                 return true;
@@ -350,6 +361,7 @@ namespace Crowbar.Actions
             settings.AttachmentLimit = newSettings.AttachmentLimit;
             settings.HideThreadsFromNonMembers = newSettings.HideThreadsFromNonMembers;
             settings.DisableAnonDownloads = newSettings.DisableAnonDownloads;
+            settings.InviteOnly = newSettings.InviteOnly;
             _context.SaveChanges();
             UpdateLimits();
             return true;

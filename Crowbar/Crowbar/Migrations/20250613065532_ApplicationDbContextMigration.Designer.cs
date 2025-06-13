@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Crowbar.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250612081206_ApplicationDbContextMigration")]
+    [Migration("20250613065532_ApplicationDbContextMigration")]
     partial class ApplicationDbContextMigration
     {
         /// <inheritdoc />
@@ -87,6 +87,9 @@ namespace Crowbar.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.PrimitiveCollection<string>("InviteCodes")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -197,6 +200,9 @@ namespace Crowbar.Migrations
 
                     b.Property<bool>("HideThreadsFromNonMembers")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("InviteOnly")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ProfileChangeLimit")
                         .HasColumnType("INTEGER");

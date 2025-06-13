@@ -158,6 +158,7 @@ namespace Crowbar.Areas.Identity.Pages.Account.Manage
                 UserName = InputModify.UserName ?? User.Identity.Name,
                 ProfilePicture = profilePic,
                 Description = InputModify.Description ?? "",
+                InviteCodes = user3.InviteCodes,
             };
             var success = await _actions.EditUser(User, user3, updatedUser, "", "",  ModelState);
             if (!success)

@@ -45,6 +45,8 @@ namespace Crowbar.Pages.Admin.Dashboard
         public class InputModifySiteModel
         {
             [Required]
+            public string? InviteOnly { get; set; }
+            [Required]
             public string? EnableRegistration { get; set; }
             [Required]
             public string? EnableLoginCaptcha { get; set; }
@@ -93,6 +95,7 @@ namespace Crowbar.Pages.Admin.Dashboard
             InputModifySite.HideThreadsFromNonMembers = siteSettings.HideThreadsFromNonMembers.ToString().ToLower();
             InputModifySite.DisableAnonDownloads = siteSettings.DisableAnonDownloads.ToString().ToLower();
 
+            InputModifySite.InviteOnly = siteSettings.InviteOnly;
             InputModifySite.FrontPageHtml = siteSettings.FrontPageHtml;
             InputModifySite.GlobalCss = siteSettings.GlobalCss;
             InputModifySite.ForumName = siteSettings.ForumName;
@@ -119,22 +122,24 @@ namespace Crowbar.Pages.Admin.Dashboard
                     Actions.Nuke(User);
                     return RedirectToPage();
                 case "modify_site":
-                    success = Actions.EditSiteSettings(User, 
-                        new SiteSettings { 
-                            EnableRegistration= InputModifySite.EnableRegistration == "true",
-                            EnableLoginCaptcha= InputModifySite.EnableLoginCaptcha == "true",
-                            EnableRegistrationCaptcha= InputModifySite.EnableRegistrationCaptcha == "true",
-                            DisableAnonDownloads= InputModifySite.DisableAnonDownloads == "true",
-                            HideThreadsFromNonMembers= InputModifySite.HideThreadsFromNonMembers == "true",
+                    success = Actions.EditSiteSettings(User,
+                        new SiteSettings
+                        {
+                            EnableRegistration = InputModifySite.EnableRegistration == "true",
+                            EnableLoginCaptcha = InputModifySite.EnableLoginCaptcha == "true",
+                            EnableRegistrationCaptcha = InputModifySite.EnableRegistrationCaptcha == "true",
+                            DisableAnonDownloads = InputModifySite.DisableAnonDownloads == "true",
+                            HideThreadsFromNonMembers = InputModifySite.HideThreadsFromNonMembers == "true",
+                            InviteOnly = InputModifySite.InviteOnly,
                             FrontPageHtml = InputModifySite.FrontPageHtml ?? string.Empty,
                             GlobalCss = InputModifySite.GlobalCss ?? string.Empty,
                             ForumName = InputModifySite.ForumName ?? string.Empty,
                             Theme = InputModifySite.Theme ?? "dark",
-                            ThreadLimit=InputModifySite.ThreadLimit < 0 ? 0 : InputModifySite.ThreadLimit,
-                            CommentLimit= InputModifySite.CommentLimit < 0 ? 0 : InputModifySite.CommentLimit,
-                            ThreadEditLimit= InputModifySite.ThreadEditLimit < 0 ? 0 : InputModifySite.ThreadEditLimit,
-                            CommentEditLimit= InputModifySite.CommentEditLimit < 0 ? 0 : InputModifySite.CommentEditLimit,
-                            ProfileChangeLimit= InputModifySite.ProfileChangeLimit < 0 ? 0 : InputModifySite.ProfileChangeLimit,
+                            ThreadLimit = InputModifySite.ThreadLimit < 0 ? 0 : InputModifySite.ThreadLimit,
+                            CommentLimit = InputModifySite.CommentLimit < 0 ? 0 : InputModifySite.CommentLimit,
+                            ThreadEditLimit = InputModifySite.ThreadEditLimit < 0 ? 0 : InputModifySite.ThreadEditLimit,
+                            CommentEditLimit = InputModifySite.CommentEditLimit < 0 ? 0 : InputModifySite.CommentEditLimit,
+                            ProfileChangeLimit = InputModifySite.ProfileChangeLimit < 0 ? 0 : InputModifySite.ProfileChangeLimit,
                             AttachmentLimit = InputModifySite.AttachmentLimit < 0 ? 0 : InputModifySite.AttachmentLimit,
                         }, ModelState);
                     if (!success) return Page();

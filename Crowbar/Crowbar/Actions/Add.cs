@@ -4,11 +4,42 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
 using Crowbar.Actions;
 using System.Threading;
+using Crowbar.Encryption;
 
 namespace Crowbar.Actions
 {
     public partial class ForumActions
     {
+        public async Task<string[]> AddInviteCodes(ClaimsPrincipal user) 
+        {
+            var inviteSetting = GetSiteSettings().InviteOnly;
+            AccessLevelRequired accessLevelRequired = inviteSetting switch {
+                "user" => AccessLevelRequired.USER,
+                "admin" => AccessLevelRequired.ADMIN,
+                _ => AccessLevelRequired.ADMIN
+            };
+            if (!HasLevelRequired(user, accessLevelRequired))
+                return [];
+
+            var inviteCodes = new string[5];
+            for (var i = 0; i < 5; i++)
+                inviteCodes[i] = EncryptionLayer.RandomText(32);
+
+            var userManager = GetUserManager();
+            var crowbarUser = await userManager.FindByNameAsync(user.Identity.Name);
+            if (crowbarUser is null) return [];
+            var success = await EditUser(user, crowbarUser, new CrowbarUser
+            {
+                UserName = crowbarUser.UserName,
+                Description = crowbarUser.Description,
+                ProfilePicture = crowbarUser.ProfilePicture,
+                InviteCodes = inviteCodes,
+            }, "", "", new());
+            if (!success) return [];
+
+            return inviteCodes;
+        }
+
         public int AddFile(ClaimsPrincipal user, Models.File file)
         {
             if (!HasLevelRequired(user, AccessLevelRequired.USER))
