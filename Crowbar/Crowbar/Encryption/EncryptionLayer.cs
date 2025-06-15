@@ -14,9 +14,53 @@ namespace Crowbar.Encryption
     /// </summary>
     public static class EncryptionLayer
     {
-        private static byte[]? key;
+        private static byte[]? _key;
+        /// <summary>
+        /// Encryption key is stored in xorred form in case an attacker
+        /// manages to dump the memory. At least this prevents the key
+        /// from being found with a simple 'cat file |strings'.
+        /// </summary>
+        private static byte[]? key {
+            get => xorDeobfuscate(_key);
+            set => _key = xorObfuscate(value);
+        }
         private static byte[]? iv;
 
+        /// <summary>
+        /// Obfuscates input data by xorring it with a predefined string.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>Cipher</returns>
+        private static byte[]? xorObfuscate(byte[]? data)
+        {
+            data ??= [];
+            var xorWith = Encoding.UTF8.GetBytes("CROWBAR");
+            var xorred = new byte[data.Length];
+            for (int i = 0; i < data.Length; i++) 
+                xorred[i] = (byte)(data[i] ^ xorWith[i%xorWith.Length]);
+            return xorred;
+        }
+
+        /// <summary>
+        /// Deobfuscates input data by xorring it with a predefined string.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>Cleartext</returns>
+        private static byte[]? xorDeobfuscate(byte[]? cipher)
+        {
+            cipher ??= [];
+            var xorWith = Encoding.UTF8.GetBytes("CROWBAR");
+            var xorred = new byte[cipher.Length];
+            for (int i = 0; i < cipher.Length; i++)
+                xorred[i] = (byte)(cipher[i] ^ xorWith[i % xorWith.Length]);
+            return xorred;
+        }
+
+        /// <summary>
+        /// Generates random string of text with the length specified.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns>Random string</returns>
         public static string RandomText(int length)
         {
             var characters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789";

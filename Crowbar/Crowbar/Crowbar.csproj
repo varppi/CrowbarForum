@@ -51,7 +51,7 @@
     <None Update="Assets\default-pfp.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="WafRegex.txt">
+    <None Update="Settings\WafRegex.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

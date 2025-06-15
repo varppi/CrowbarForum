@@ -26,12 +26,12 @@ RUN dotnet publish "./Crowbar.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+COPY --from=publish /app/publish /app
 WORKDIR /app
-COPY . .
 USER root
-COPY --from=publish /app/publish .
-RUN chown -R app:app .
-RUN chmod -R 700 .
+COPY . /host
+RUN chown -R app:app /app
+RUN chmod -R 700 /app
 USER app
 RUN dotnet tool install --global dotnet-ef --version 9.0.5
 RUN dotnet tool restore
@@ -39,10 +39,11 @@ ENV PATH="$PATH:/home/app/.dotnet/tools"
 RUN dotnet ef migrations add ApplicationDbContextMigration; exit 0;
 RUN dotnet ef migrations remove; exit 0;
 RUN dotnet ef migrations add ApplicationDbContextMigration; exit 0;
-RUN dotnet ef database update --project Crowbar
+USER root
+RUN dotnet ef database update --project /host/Crowbar
+RUN chmod -R 700 /host
+USER app
 RUN mkdir Database
-RUN cd Crowbar
 ENTRYPOINT ["dotnet", "Crowbar.dll"]
-
 
 # Making this Dockerfile work cost me my will to live and probably knocked off 10 years off my life exptectancy.

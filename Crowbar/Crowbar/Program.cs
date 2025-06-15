@@ -19,11 +19,13 @@ using System.Security.Cryptography;
 using Westwind.AspNetCore.Markdown;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.AddJsonFile("Settings/appsettings.json");
 var encryptionKey = builder.Configuration["encryptionkey"];
 if (encryptionKey is null)
     throw new Exception("Please provide a 'encryptionkey' in you appsettings.json");
-EncryptionLayer.SetPassword(encryptionKey.ToLower().Trim());
+if (encryptionKey.ToLower().Trim() == "RANDOMIZE_KEY")
+    encryptionKey = EncryptionLayer.RandomText(1024);
+EncryptionLayer.SetPassword(encryptionKey);
 encryptionKey = "0000000000000000";
 
 // Add services to the container.

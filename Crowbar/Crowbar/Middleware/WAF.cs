@@ -22,7 +22,7 @@ namespace Crowbar.Middleware
         private static string[] restricted = ["identity/"];
         private static string[] handlesUploads = ["threads/"];
         private static string[] exemptPaths = ["admin/"];
-        private static string[] maliciousRegex = [..System.IO.File.ReadAllLines("WafRegex.txt")];
+        private static string[] maliciousRegex = [..System.IO.File.ReadAllLines("Settings/WafRegex.txt")];
 
         private static string notFoundLogo = @"
 #  #  #####  #  #    #     # ##### #########   ##### ##### #   # #     # ####
@@ -30,6 +30,22 @@ namespace Crowbar.Middleware
 ####  #   #  ####    #  #  # #   #     #       ##### #   # #   # #  #  # #    #
    #  #   #     #    #   # # #   #     #       #     #   # #   # #   # # #   #
    #  #####     #    #     # #####     #       #     ##### ##### #     # ####
+        ".Trim();
+        private static string internalServerErrorLogo = @"
+ _____ _   _ _____ ___________ _   _   ___   _       _____ ___________ _   _ ___________ 
+|_   _| \ | |_   _|  ___| ___ \ \ | | / _ \ | |     /  ___|  ___| ___ \ | | |  ___| ___ \
+  | | |  \| | | | | |__ | |_/ /  \| |/ /_\ \| |     \ `--.| |__ | |_/ / | | | |__ | |_/ /
+  | | | . ` | | | |  __||    /| . ` ||  _  || |      `--. \  __||    /| | | |  __||    / 
+ _| |_| |\  | | | | |___| |\ \| |\  || | | || |____ /\__/ / |___| |\ \\ \_/ / |___| |\ \ 
+ \___/\_| \_/ \_/ \____/\_| \_\_| \_/\_| |_/\_____/ \____/\____/\_| \_|\___/\____/\_| \_|
+                                                                                         
+                                                                                         
+ _________________ ___________                                                           
+|  ___| ___ \ ___ \  _  | ___ \                                                          
+| |__ | |_/ / |_/ / | | | |_/ /                                                          
+|  __||    /|    /| | | |    /                                                           
+| |___| |\ \| |\ \\ \_/ / |\ \                                                           
+\____/\_| \_\_| \_|\___/\_| \_|                                                                                                                                                 
         ".Trim();
         private static string blockedLogo = @"
  ___  ___ _____ ___ _  _ _____ ___   _   _    _ __   __ 
@@ -126,9 +142,14 @@ namespace Crowbar.Middleware
 
             await next.Invoke(context);
 
-            if (context.Response.StatusCode == 404)
+            switch(context.Response.StatusCode)
             {
-                context.Waf404(); return;
+                case 404:
+                    context.Waf404();
+                    return;
+                case 500:
+                    context.Waf500();
+                    return;
             }
         }
 
@@ -192,6 +213,16 @@ namespace Crowbar.Middleware
             await RandomGarbage(payload, context);
         }
 
+
+        /// <summary>
+        /// Displays a custom 500 page with ascii art
+        /// </summary>
+        /// <param name="context"></param>
+        public async static void Waf500(this HttpContext context)
+        {
+            var payload = internalServerErrorLogo;
+            await RandomGarbage(payload, context);
+        }
 
         /// <summary>
         /// Displays a custom 404 page with ascii art

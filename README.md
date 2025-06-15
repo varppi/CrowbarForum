@@ -47,7 +47,7 @@ You can use dotnet on bare metal or use Docker. Docker is more recommended due t
 git clone https://github.com/SpoofIMEI/CrowbarForum
 cd CrowbarForum/Crowbar
 docker build -t crowbar -f Crowbar/Dockerfile .
-docker run --name crowbarforum_instance -p 8080:8080 crowbar # Add -v Crowbar/Database:/app/Database if you want to access the SQLite database from the host.
+docker run --name crowbarforum_instance -v Crowbar/Database:/app/Database -v Crowbar/Settings:/app/Settings -p 8080:8080 crowbar
 ```
 ### Bare metal
 ```bash
@@ -70,7 +70,10 @@ By default Crowbar Forum uses SQLite, but you can also use MSSQL or MySQL by cha
 `Server=myserver;Database=mydb;User=myuser;Password=mypassword;`
 
 ### WAF
-Edit WafRegex.txt in the root directory.
+Edit WafRegex.txt in the `Settings` directory.
+
+### Encryption key
+You can find the encryption key setting in the Settings/appsettings.json file. You can insert whatever password or random string you want, but if you put `RANDOMIZE_KEY` it will generate a random password at each startup. This also means that if you shut down the server, the database will be gone.
 
 <hr><br><br>
 
