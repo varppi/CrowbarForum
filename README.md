@@ -44,14 +44,14 @@ You can use dotnet on bare metal or use Docker. Docker is more recommended due t
 
 ### Docker
 ```bash
-git clone https://github.com/SpoofIMEI/CrowbarForum
+git clone https://github.com/Varppi/CrowbarForum
 cd CrowbarForum/Crowbar
 docker build -t crowbar -f Crowbar/Dockerfile .
 docker run --name crowbarforum_instance -v Crowbar/Database:/app/Database -v Crowbar/Settings:/app/Settings -p 8080:8080 crowbar
 ```
 ### Bare metal
 ```bash
-git clone https://github.com/SpoofIMEI/CrowbarForum
+git clone https://github.com/Varppi/CrowbarForum
 cd CrowbarForum/Crowbar/Crowbar
 dotnet tool install --global dotnet-ef 
 export PATH=$PATH:~/.dotnet # Adding dotnet tool path to your $PATH variable (optional)
