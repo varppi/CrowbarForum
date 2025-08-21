@@ -29,23 +29,17 @@ All the forums that don't use JS seem to be written in PHP, which is as a langua
 
 <hr><br><br>
 
-# Screenshots
-**Remember, you can customize the CSS yourself easily if you want to change things up a little.**
-<br></br>
-<img src="https://github.com/user-attachments/assets/0bb7e11d-fd51-4dae-8a8e-ad3d431f602d" width=750>
-<img src="https://github.com/user-attachments/assets/c293050b-e544-40fe-8bef-98aca73784ce" width=750>
-<img src="https://github.com/user-attachments/assets/c620257a-e010-4546-b705-74f114d10c71" width=750>
-<img src="https://github.com/user-attachments/assets/031b3cd5-3c87-40f2-8384-9b2804a25d12" width=750>
-
-<hr><br><br>
-
 # Installation and usage
 You can use dotnet on bare metal or use Docker. Docker is more recommended due to security reasons. It is also recommended to set up a reverse proxy like caddy if you are planning to run this as a clearnet site.
+
+> [!NOTE]
+> Look through the settings at Crowbar/Settings/appsettings.json before launching a production version.
 
 ### Docker
 ```bash
 git clone https://github.com/Varppi/CrowbarForum
 cd CrowbarForum/Crowbar
+mkdir Crowbar/Database
 docker build -t crowbar -f Crowbar/Dockerfile .
 docker run --name crowbarforum_instance -v Crowbar/Database:/app/Database -v Crowbar/Settings:/app/Settings -p 8080:8080 crowbar
 ```
@@ -60,6 +54,18 @@ dotnet ef migrations add ApplicationDbContextMigration
 dotnet ef database update 
 dotnet run
 ```
+
+<hr><br><br>
+
+# Screenshots
+**Remember, you can customize the CSS yourself easily if you want to change things up a little.**
+<br></br>
+<img src="https://github.com/user-attachments/assets/0bb7e11d-fd51-4dae-8a8e-ad3d431f602d" width=750>
+<img src="https://github.com/user-attachments/assets/c293050b-e544-40fe-8bef-98aca73784ce" width=750>
+<img src="https://github.com/user-attachments/assets/c620257a-e010-4546-b705-74f114d10c71" width=750>
+<img src="https://github.com/user-attachments/assets/031b3cd5-3c87-40f2-8384-9b2804a25d12" width=750>
+
+<hr><br><br>
 
 ## Configuration
 ### Database
